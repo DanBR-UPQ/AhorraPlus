@@ -1,6 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { useState } from 'react'
+import { StyleSheet, Text, View, Pressable } from 'react-native'
 
 export default function TransaccionesScreen() {
+    const [screen, setScreen] = useState('gastos')
+    const [fecha, setFecha] = useState('dia')
+
   return (
     <View style={styles.container}>
 
@@ -11,12 +15,17 @@ export default function TransaccionesScreen() {
 
         {/* BOTONES GASTOS INGERSOS */}
         <View style={styles.selectorContainer}>
+            
             <View style={styles.gastosBoton}>
-                <Text style={styles.titulo}>GASTOS</Text>
+                <Pressable onPress={() => setScreen('gastos')}>
+                    <Text style={styles.titulo}>GASTOS</Text>
+                </Pressable>
             </View>
 
             <View style= {styles.ingresosBoton}>
-                <Text style={styles.titulo}>INGRESOS</Text>
+                <Pressable onPress={() => setScreen('ingresos')}>
+                    <Text style={styles.titulo}>INGRESOS</Text>
+                </Pressable>
             </View>
         </View>
 
@@ -26,20 +35,38 @@ export default function TransaccionesScreen() {
 
             <View style={styles.fechaContainer}>
                 <View style={styles.fechaPressable}>
-                    <Text style={styles.fechaTexto}>DÍA</Text>
+                    <Pressable onPress={() => setFecha('dia')}><Text style={styles.fechaTexto}>DÍA</Text></Pressable>
                 </View>
                 <View style={styles.fechaPressable}>
-                    <Text style={styles.fechaTexto}>MES</Text>
+                    <Pressable onPress={() => setFecha('mes')}><Text style={styles.fechaTexto}>MES</Text></Pressable>
                 </View>
                 <View style={styles.fechaPressable}>
-                    <Text style={styles.fechaTexto}>AÑO</Text>
+                    <Pressable onPress={() => setFecha('anio')}><Text style={styles.fechaTexto}>AÑO</Text></Pressable>
                 </View>
             </View>
 
 
 
 
-            <View style={styles.transaccionesContainer}></View>
+            <View style={styles.transaccionesContainer}>
+
+
+                <Text>{screen}</Text>
+                <Text>{fecha}</Text>
+
+                <Text style={styles.fecha2Texto}>28 de Septiembre de 2025</Text>
+
+                <View style={styles.elemContainer}>
+                    <View style={styles.elemIzq}>
+                        <Text style={styles.categoriaText}>Hogar</Text>
+                        <Text style={styles.comentarioText}>Pago de luz</Text>
+                    </View>
+                    <View style={styles.elemDer}>
+                        <Text style={styles.montoText}> $500</Text>
+                    </View>
+                </View>
+
+            </View>
         </View>
       
     </View>
@@ -67,6 +94,7 @@ const styles = StyleSheet.create({
         width: '60%',
         height: '5%',
         flexDirection: 'row',
+        paddingBottom: 5,
         /* backgroundColor: '#9b9898ff', */
     },
     gastosBoton: {
@@ -99,11 +127,56 @@ const styles = StyleSheet.create({
     },
     fechaTexto: {
         color: '#42688eff',
-        fontFamily: 'Inter',
+        /* fontFamily: 'Inter', */
     },
     transaccionesContainer: {
         flex: 10,
+        alignItems: 'center',
         /* backgroundColor: '#c8b5b5ff',   */      
+    },
+
+    fecha2Texto: {
+        color: 'rgba(159, 147, 147, 1)',
+        fontWeight: '700',
+        alignSelf: 'flex-start',
+        marginBottom: 5,
+        marginStart: 10,
+    },
+
+    elemContainer: {
+        width: '90%',
+        height: 50,
+        backgroundColor: 'rgba(134, 166, 201, 0.39)',
+        borderRadius: 20,
+        flexDirection: 'row',
+    },
+    elemIzq: {
+        flex: 1,
+        justifyContent: 'center',
+        marginStart: 15,
+        /* backgroundColor: 'blue',  */
+    },
+    elemDer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'end',
+        marginEnd: 15,
+    },
+    categoriaText: {
+        /* fontFamily: 'Inter', */
+        fontWeight: '700',
+        fontSize: 16,
+    },
+    comentarioText: {
+        /* fontFamily: 'Inter', */
+        fontWeight: '600',
+        fontSize: 15,
+        color: 'rgba(107, 101, 101, 1)',
+    },
+    montoText: {
+        fontFamily: 'Inter',
+        fontWeight: '600',
+        fontSize: 18,
     },
 
 })
