@@ -25,6 +25,10 @@ export default function TestScreen() {
           <View style={styles.container}>
             <Text>TestScreen</Text>
             <Button title='Transacciones' onPress={() => setVist('tr')}/>
+              <Button title='login' onPress={() => setVist('Login')}/>
+                <Button title='RegistroIngresos' onPress={() => setVist('RegIn')}/>
+
+
           </View>
         )
   }
