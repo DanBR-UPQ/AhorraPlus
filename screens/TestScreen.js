@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { StyleSheet, Text, View, Button } from 'react-native'
 import TransaccionesScreen from './TransaccionesScreen'
+import LoginScreen from './LoginScreen'
 
 export default function TestScreen() {
 
@@ -9,12 +10,15 @@ export default function TestScreen() {
   switch(vist) {
     case 'tr':
       return <TransaccionesScreen/>
-    case 'menu':
+    case 'Login':
+      return<LoginScreen/>
+      case 'menu':
       default: 
         return (
           <View style={styles.container}>
             <Text>TestScreen</Text>
             <Button title='Transacciones' onPress={() => setVist('tr')}/>
+            <Button title='LoginScreen' onPress={() => setVist('Login')}/>
           </View>
         )
   }
