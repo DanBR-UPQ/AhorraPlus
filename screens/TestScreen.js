@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Button } from 'react-native'
 import TransaccionesScreen from './TransaccionesScreen'
 import LoginScreen from './LoginScreen'
 import RegistroIngresosScreen from './RegistroIngresosScreen'
+import PagosScreen from './PagosScreen'
 export default function TestScreen() {
 
   const [vist, setVist] = useState('menu')
@@ -14,6 +15,9 @@ export default function TestScreen() {
       return <RegistroIngresosScreen/>
       case 'Login':
       return<LoginScreen/>
+      case 'Pagos':
+      return<PagosScreen/>
+
    
    
    
@@ -27,6 +31,7 @@ export default function TestScreen() {
             <Button title='Transacciones' onPress={() => setVist('tr')}/>
               <Button title='login' onPress={() => setVist('Login')}/>
                 <Button title='RegistroIngresos' onPress={() => setVist('RegIn')}/>
+                 < Button title= 'PagosScreen' onPress={() => setVist('Pagos')}/>
 
 
           </View>
