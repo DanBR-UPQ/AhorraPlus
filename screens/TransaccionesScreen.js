@@ -51,9 +51,6 @@ export default function TransaccionesScreen() {
             <View style={styles.transaccionesContainer}>
 
 
-                <Text>{screen}</Text>
-                <Text>{fecha}</Text>
-
                 <Text style={styles.fecha2Texto}>28 de Septiembre de 2025</Text>
 
                 <View style={styles.elemContainer}>
@@ -65,6 +62,10 @@ export default function TransaccionesScreen() {
                         <Text style={styles.montoText}> $500</Text>
                     </View>
                 </View>
+
+
+                <Text>{screen}</Text>
+                <Text>{fecha}</Text>                
 
             </View>
         </View>
@@ -81,14 +82,16 @@ const styles = StyleSheet.create({
     },
     tituloContainer: {
         width: '100%',
-        height: '10%',
-        /* backgroundColor: 'gray', */
+        height: '5%',
+        /* backgroundColor: 'gray',  */
         alignItems: 'center',
         justifyContent: 'end',
     },
     titulo: {
         color: 'white',
-        fontFamily: 'Inter',
+        fontSize: 13,
+        fontWeight: 600,
+        /* fontFamily: 'Inter', */
     },
     selectorContainer: {
         width: '60%',
@@ -109,7 +112,7 @@ const styles = StyleSheet.create({
 
     mainContainer: {
         width: '90%',
-        height: '80%',
+        height: '85%',
         backgroundColor: '#D9D9D9',
         borderRadius: 10,
     },
@@ -127,10 +130,11 @@ const styles = StyleSheet.create({
     },
     fechaTexto: {
         color: '#42688eff',
+        fontSize: 13,
         /* fontFamily: 'Inter', */
     },
     transaccionesContainer: {
-        flex: 10,
+        flex: 15,
         alignItems: 'center',
         /* backgroundColor: '#c8b5b5ff',   */      
     },
@@ -139,6 +143,7 @@ const styles = StyleSheet.create({
         color: 'rgba(159, 147, 147, 1)',
         fontWeight: '700',
         alignSelf: 'flex-start',
+        fontSize: 10,
         marginBottom: 5,
         marginStart: 10,
     },
@@ -147,13 +152,14 @@ const styles = StyleSheet.create({
         width: '90%',
         height: 50,
         backgroundColor: 'rgba(134, 166, 201, 0.39)',
-        borderRadius: 20,
+        borderRadius: 10,
         flexDirection: 'row',
     },
     elemIzq: {
         flex: 1,
         justifyContent: 'center',
-        marginStart: 15,
+        marginStart: 10,
+        gap: 5,
         /* backgroundColor: 'blue',  */
     },
     elemDer: {
@@ -165,18 +171,18 @@ const styles = StyleSheet.create({
     categoriaText: {
         /* fontFamily: 'Inter', */
         fontWeight: '700',
-        fontSize: 16,
+        fontSize: 15,
     },
     comentarioText: {
         /* fontFamily: 'Inter', */
         fontWeight: '600',
-        fontSize: 15,
+        fontSize: 11,
         color: 'rgba(107, 101, 101, 1)',
     },
     montoText: {
-        fontFamily: 'Inter',
+        /* fontFamily: 'Inter', */
         fontWeight: '600',
-        fontSize: 18,
+        fontSize: 16,
     },
 
 })
