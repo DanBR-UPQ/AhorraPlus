@@ -4,6 +4,7 @@ import TransaccionesScreen from './TransaccionesScreen'
 import LoginScreen from './LoginScreen'
 import RegistroIngresosScreen from './RegistroIngresosScreen'
 import PagosScreen from './PagosScreen'
+import Crearpagos from './Crearpagos'
 export default function TestScreen() {
 
   const [vist, setVist] = useState('menu')
@@ -17,6 +18,8 @@ export default function TestScreen() {
       return<LoginScreen/>
       case 'Pagos':
       return<PagosScreen/>
+      case 'CrearPago':
+      return<Crearpagos/>
 
    
    
@@ -32,6 +35,7 @@ export default function TestScreen() {
               <Button title='login' onPress={() => setVist('Login')}/>
                 <Button title='RegistroIngresos' onPress={() => setVist('RegIn')}/>
                  < Button title= 'PagosScreen' onPress={() => setVist('Pagos')}/>
+                  < Button title= 'CrearPago' onPress={() => setVist('CrearPago')}/>
 
 
           </View>
