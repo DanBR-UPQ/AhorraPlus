@@ -1,6 +1,6 @@
-import { Text, StyleSheet, View, ImageBackground,TextInput, Image,button } from 'react-native'
+import { Text, StyleSheet, View, ImageBackground,TextInput, Image, Button} from 'react-native'
 import React, { useState } from 'react'
-import { Button } from 'react-native-web';
+
 
 
 

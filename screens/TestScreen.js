@@ -5,11 +5,18 @@ import LoginScreen from './LoginScreen'
 import RegistroIngresosScreen from './RegistroIngresosScreen'
 import CrearScreen from './CrearScreen'
 import HomeScreen from './HomeScreen'
+import GraficosScreen from './GraficosScreen'
+import ObjetivosScreen from './ObjetivosScreen'
+
+
 
 import PagosScreen from './PagosScreen'
 
 import Crearpagos from './Crearpagos'
 import Detallespagos from './Detallespagos'
+
+import AngregarObjetivoScreen from './AgregarObjetivoScreen'
+
 
 
 export default function TestScreen() {
@@ -19,11 +26,13 @@ export default function TestScreen() {
   switch(vist) {
     case 'tr':
       return <TransaccionesScreen/>
+    case 'graf':
+      return <GraficosScreen/>
     case 'RegIn':
       return <RegistroIngresosScreen/>
       case 'Login':
       return<LoginScreen/>
-       case 'Pagos':
+      case 'Pagos':
       return<PagosScreen/>
 
       case 'CrearPago':
@@ -36,17 +45,23 @@ export default function TestScreen() {
         case 'Detalles':
         return<Detallespagos/>
 
-     
+      case 'AgrObj':
+        return<AngregarObjetivoScreen/>
+      case 'objetivos':
+        return<ObjetivosScreen/>
 
-   
-   
+
+
+
+
+      return<LoginScreen/>
       case 'menu':
-      default: 
+      default:
         return (
           <View style={styles.container}>
             <Text>TestScreen</Text>
             <Button title='Transacciones' onPress={() => setVist('tr')}/>
-            <Button title='login' onPress={() => setVist('Login')}/>
+              <Button title='login' onPress={() => setVist('Login')}/>
             <Button title='RegistroIngresos' onPress={() => setVist('RegIn')}/>
             <Button title='crear' onPress={() => setVist('crear')}/>
             <Button title='login' onPress={() => setVist('Login')}/>
@@ -56,6 +71,13 @@ export default function TestScreen() {
                  < Button title= 'PagosScreen' onPress={() => setVist('Pagos')}/>
                   < Button title= 'CrearPago' onPress={() => setVist('CrearPago')}/>
                     < Button title= 'Detalles' onPress={() => setVist('Detalles')}/>
+            <Button title='Objetivos' onPress={() => setVist('objetivos')}/>
+            <Button title='RegistroIngresos' onPress={() => setVist('RegIn')}/>
+            < Button title= 'PagosScreen' onPress={() => setVist('Pagos')}/>
+            < Button title= 'CrearPago' onPress={() => setVist('CrearPago')}/>
+            < Button title= 'Añadir Objetivo' onPress={() => setVist('AgrObj')}/>
+            < Button title= 'Gráficas' onPress={() => setVist('graf')}/>
+
 
 
           </View>
@@ -68,5 +90,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'gray',
   }
 })

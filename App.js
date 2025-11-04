@@ -1,7 +1,7 @@
-import TestScreen from './screens/TestScreen';
+import BarraLateral from './screens/BarraLateral'
 export default function App() {
 
   return (
-    <TestScreen/>
+    <BarraLateral/>
   );
 }
