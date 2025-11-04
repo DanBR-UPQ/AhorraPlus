@@ -119,11 +119,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   boton: {
-    flex: 1,
-    padding: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginHorizontal: 4,
+      flex: 1,
+      marginHorizontal: 5,
+      borderRadius: 25,
+      paddingVertical: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
   },
   botonAceptar: {
     backgroundColor: '#007AFF',

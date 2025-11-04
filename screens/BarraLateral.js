@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
-import AgregarObjetivoScreen from '../screens/AgregarObjetivoScreen';
+import AgregarPresupuestoScreen from './AgregarPresupuestoScreen';
 import Crearpagos from '../screens/Crearpagos';
 import CrearScreen from '../screens/CrearScreen';
 import EditarPago from '../screens/EditarPago';
@@ -8,11 +8,12 @@ import EditarRegistroScreen from '../screens/EditarRegistroScreen';
 import GraficosScreen from '../screens/GraficosScreen';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
-import ObjetivosScreen from '../screens/ObjetivosScreen';
+import PresupuestoScreen from './PresupuestoScreen';
 import PagosScreen from '../screens/PagosScreen';
 import RegistroIngresosScreen from '../screens/RegistroIngresosScreen';
 import TestScreen from '../screens/TestScreen';
 import TransaccionesScreen from '../screens/TransaccionesScreen';
+import EditarPresupuestoScreen from './EditarPresupuestoScreen';
 
 export default function BarraLateral() {
   const [barraAbierta, setBarraAbierta] = useState(false);
@@ -28,8 +29,9 @@ export default function BarraLateral() {
     'Pagos': <PagosScreen />,
     'Crear pago': <Crearpagos />,
     'Editar pago': <EditarPago />,
-    'Agregar objetivo': <AgregarObjetivoScreen />,
-    'Objetivos': <ObjetivosScreen />,
+    'Presupuesto': <PresupuestoScreen />,
+    'Agregar Presupuesto': <AgregarPresupuestoScreen />,
+    'Editar Presupuesto': <EditarPresupuestoScreen/>,
     'Crear nueva cuenta': <CrearScreen />,
     'Test': <TestScreen />,
   };

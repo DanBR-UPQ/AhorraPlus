@@ -6,7 +6,7 @@ import RegistroIngresosScreen from './RegistroIngresosScreen'
 import CrearScreen from './CrearScreen'
 import HomeScreen from './HomeScreen'
 import GraficosScreen from './GraficosScreen'
-import ObjetivosScreen from './ObjetivosScreen'
+import ObjetivosScreen from './PresupuestoScreen'
 import Editarpago from './EditarPago'
 import EditarRegistroScreen from './EditarRegistroScreen'
 
@@ -15,7 +15,7 @@ import EditarRegistroScreen from './EditarRegistroScreen'
 import PagosScreen from './PagosScreen'
 
 import Crearpagos from './Crearpagos'
-import AngregarObjetivoScreen from './AgregarObjetivoScreen'
+import AngregarObjetivoScreen from './AgregarPresupuestoScreen'
 
 
 
