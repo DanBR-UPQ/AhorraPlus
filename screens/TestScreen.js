@@ -6,9 +6,12 @@ import RegistroIngresosScreen from './RegistroIngresosScreen'
 import CrearScreen from './CrearScreen'
 import HomeScreen from './HomeScreen'
 
+
 import PagosScreen from './PagosScreen'
 
 import Crearpagos from './Crearpagos'
+import AngregarObjetivoScreen from './AgregarObjetivoScreen'
+
 
 
 export default function TestScreen() {
@@ -22,7 +25,7 @@ export default function TestScreen() {
       return <RegistroIngresosScreen/>
       case 'Login':
       return<LoginScreen/>
-       case 'Pagos':
+      case 'Pagos':
       return<PagosScreen/>
 
       case 'CrearPago':
@@ -32,26 +35,31 @@ export default function TestScreen() {
         return<CrearScreen/>
       case 'home':
         return<HomeScreen/>
+      case 'AgrObj':
+        return<AngregarObjetivoScreen/>
 
-     
 
-   
-   
+
+
+
+      return<LoginScreen/>
       case 'menu':
-      default: 
+      default:
         return (
           <View style={styles.container}>
             <Text>TestScreen</Text>
             <Button title='Transacciones' onPress={() => setVist('tr')}/>
-            <Button title='login' onPress={() => setVist('Login')}/>
+              <Button title='login' onPress={() => setVist('Login')}/>
             <Button title='RegistroIngresos' onPress={() => setVist('RegIn')}/>
             <Button title='crear' onPress={() => setVist('crear')}/>
             <Button title='login' onPress={() => setVist('Login')}/>
             <Button title='home' onPress={() => setVist('home')}/>
-              <Button title='login' onPress={() => setVist('Login')}/>
-                <Button title='RegistroIngresos' onPress={() => setVist('RegIn')}/>
-                 < Button title= 'PagosScreen' onPress={() => setVist('Pagos')}/>
-                  < Button title= 'CrearPago' onPress={() => setVist('CrearPago')}/>
+            <Button title='login' onPress={() => setVist('Login')}/>
+            <Button title='RegistroIngresos' onPress={() => setVist('RegIn')}/>
+            < Button title= 'PagosScreen' onPress={() => setVist('Pagos')}/>
+            < Button title= 'CrearPago' onPress={() => setVist('CrearPago')}/>
+            < Button title= 'Añadir Objetivo' onPress={() => setVist('AgrObj')}/>
+
 
 
           </View>
