@@ -36,7 +36,7 @@ export default function PagosProgramados() {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: '#007AFF',
+    backgroundColor: '#052659',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   },
   textoCrear: {
     fontSize: 16,
-    color: '#007AFF',
+    color: '#5483B3',
   },
   filaPago: {
     flexDirection: 'row',

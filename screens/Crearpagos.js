@@ -55,13 +55,13 @@ export default function Crearpagos() {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: '#021980ff',
+    backgroundColor: '#021024',
     justifyContent: 'center',
     alignItems: 'center',
   },
   contenedor: {
     width: '90%',
-    backgroundColor: '#007AFF',
+    backgroundColor: '#7DA0CA',
     borderRadius: 12,
     padding: 20,
     elevation: 4,
