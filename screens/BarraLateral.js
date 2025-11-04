@@ -17,7 +17,7 @@ import EditarPresupuestoScreen from './EditarPresupuestoScreen';
 
 export default function BarraLateral() {
   const [barraAbierta, setBarraAbierta] = useState(false);
-  const [screen, setScreen] = useState('Test');
+  const [screen, setScreen] = useState('Inicio');
 
   const screens = {
     'Inicio': <HomeScreen />,
@@ -33,7 +33,7 @@ export default function BarraLateral() {
     'Agregar Presupuesto': <AgregarPresupuestoScreen />,
     'Editar Presupuesto': <EditarPresupuestoScreen/>,
     'Crear nueva cuenta': <CrearScreen />,
-    'Test': <TestScreen />,
+    /* 'Test': <TestScreen />, */
   };
 
   return (
