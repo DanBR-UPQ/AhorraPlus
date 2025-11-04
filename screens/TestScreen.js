@@ -6,6 +6,8 @@ import RegistroIngresosScreen from './RegistroIngresosScreen'
 import CrearScreen from './CrearScreen'
 import HomeScreen from './HomeScreen'
 import GraficosScreen from './GraficosScreen'
+import ObjetivosScreen from './ObjetivosScreen'
+
 
 
 import PagosScreen from './PagosScreen'
@@ -40,6 +42,8 @@ export default function TestScreen() {
         return<HomeScreen/>
       case 'AgrObj':
         return<AngregarObjetivoScreen/>
+      case 'objetivos':
+        return<ObjetivosScreen/>
 
 
 
@@ -57,7 +61,7 @@ export default function TestScreen() {
             <Button title='crear' onPress={() => setVist('crear')}/>
             <Button title='login' onPress={() => setVist('Login')}/>
             <Button title='home' onPress={() => setVist('home')}/>
-            <Button title='login' onPress={() => setVist('Login')}/>
+            <Button title='Objetivos' onPress={() => setVist('objetivos')}/>
             <Button title='RegistroIngresos' onPress={() => setVist('RegIn')}/>
             < Button title= 'PagosScreen' onPress={() => setVist('Pagos')}/>
             < Button title= 'CrearPago' onPress={() => setVist('CrearPago')}/>
