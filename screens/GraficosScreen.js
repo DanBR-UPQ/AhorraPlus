@@ -1,4 +1,4 @@
-import { Text, StyleSheet, View, ImageBackground } from 'react-native'
+import { Text, StyleSheet, View, ImageBackground, Image } from 'react-native'
 
 export default function GraficosScreen() {
     return (
@@ -7,14 +7,28 @@ export default function GraficosScreen() {
         resizeMode='cover'
         style={styles.container}
         >
-            <Text>GraficosScreen</Text>
+            <Text style={styles.titulo}>Gráficos</Text>
+
+
+            <View style={styles.fecha2Container}>
+                <Text style={styles.titulo3}>General</Text>
+                <Text style={styles.titulo3}>Gastos</Text>
+                <Text style={styles.titulo3}>Ingresos</Text>                
+            </View>
+
 
             <View style={styles.grafContainer}>
                 <View style={styles.fechaContainer}>
-                    <Text>Día</Text>
-                    <Text>Mes</Text>
-                    <Text>Año</Text>
+                    <Text style={styles.titulo2}>Día</Text>
+                    <Text style={styles.titulo2}>Mes</Text>
+                    <Text style={styles.titulo2}>Año</Text>
                 </View>
+                
+                <Image
+                source={require('../assets/graficaTest.png')}
+                resizeMode= 'contain'
+                style= {styles.graficaImage}
+                /> 
             </View>
 
 
@@ -35,6 +49,51 @@ export default function GraficosScreen() {
                     <Text style={styles.montoText}> $500</Text>
                 </View>
             </View>            
+
+
+            <Text style={styles.fecha2Texto}>23 de Septiembre de 2025</Text>
+
+            <View style={styles.elemContainer}>
+                <View style={styles.elemIzq}>
+                    <Text style={styles.categoriaText}>Hogar</Text>
+                    <Text style={styles.comentarioText}>Pago de internet</Text>
+                </View>
+                <View style={styles.elemDer}>
+                    <Text style={styles.montoText}> $420</Text>
+                </View>
+            </View>
+
+            <View style={styles.elemContainer}>
+                <View style={styles.elemIzq}>
+                    <Text style={styles.categoriaText}>Comida</Text>
+                    <Text style={styles.comentarioText}>Supermercado</Text>
+                </View>
+                <View style={styles.elemDer}>
+                    <Text style={styles.montoText}> $1,200</Text>
+                </View>
+            </View>
+
+            <View style={styles.elemContainer}>
+                <View style={styles.elemIzq}>
+                    <Text style={styles.categoriaText}>Transporte</Text>
+                    <Text style={styles.comentarioText}>Gasolina</Text>
+                </View>
+                <View style={styles.elemDer}>
+                    <Text style={styles.montoText}> $350</Text>
+                </View>
+            </View>
+
+            <Text style={styles.fecha2Texto}>7 de Agosto de 2025</Text>
+
+            <View style={styles.elemContainer}>
+                <View style={styles.elemIzq}>
+                    <Text style={styles.categoriaText}>Entretenimiento</Text>
+                    <Text style={styles.comentarioText}>Cine</Text>
+                </View>
+                <View style={styles.elemDer}>
+                    <Text style={styles.montoText}> $280</Text>
+                </View>
+            </View>
         </ImageBackground>
     )
 }
@@ -47,8 +106,33 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(55, 76, 146, 1)',
     },
 
-
-
+    titulo: {
+        color: 'rgba(68, 65, 65, 1)',
+        fontSize: 18,
+        fontWeight: 700,
+        marginTop: 15,
+        /* fontFamily: 'Inter', */
+    },
+    titulo2: {
+        color: 'white',
+        fontSize: 15,
+        fontWeight: 400,
+        /* fontFamily: 'Inter', */
+    },
+    titulo3: {
+        color: '#26208fff',
+        fontSize: 15,
+        fontWeight: 600,
+        /* fontFamily: 'Inter', */
+    },
+    fecha2Container: {
+        alignItems: 'center',
+        gap: 50,
+        flexDirection: 'row',
+        marginTop: 10,
+        /* marginBottom: 5, */
+        /* backgroundColor: 'blue', */
+    },
 
     grafContainer: {
         width: '90%',
@@ -56,6 +140,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         backgroundColor: 'rgba(148, 154, 177, 1)',
         alignItems: 'center',
+        paddingTop: 10,
+        marginTop: 10,
         /* justifyContent: 'center', */
     },
     fechaContainer: {
@@ -66,6 +152,10 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         /* backgroundColor: 'blue', */
     },
+    graficaImage: {
+        flex: 1, 
+        width: '100%', 
+    },
 
 
 
@@ -75,7 +165,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         alignSelf: 'flex-start',
         fontSize: 10,
-        marginBottom: 5,
+        marginBottom: 10,
         marginTop: 5,
         marginStart: 30,
     },    
@@ -85,6 +175,7 @@ const styles = StyleSheet.create({
         height: 50,
         backgroundColor: 'rgba(134, 166, 201, 0.39)',
         borderRadius: 10,
+        marginBottom: 10,
         flexDirection: 'row',
     },
     elemIzq: {
@@ -97,7 +188,7 @@ const styles = StyleSheet.create({
     elemDer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'end',
+        alignItems: 'flex-end',
         marginEnd: 15,
     },
     categoriaText: {
@@ -109,7 +200,7 @@ const styles = StyleSheet.create({
         /* fontFamily: 'Inter', */
         fontWeight: '600',
         fontSize: 11,
-        color: 'rgba(107, 101, 101, 1)',
+        color: 'rgba(68, 65, 65, 1)',
     },
     montoText: {
         /* fontFamily: 'Inter', */
