@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     elemContainer: {
         width: '90%',
         height: 50,
-        backgroundColor: 'rgba(134, 166, 201, 0.39)',
+        backgroundColor: 'rgba(148, 154, 177, 100)',
         borderRadius: 10,
         flexDirection: 'row',
     },
