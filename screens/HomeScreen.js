@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     cuadroArriba:{
         backgroundColor:'#5483b3',
         width:'100%',
-        height:'40%',
+        height:'50%',
         justifyContent:'center',
         alignItems:'center',
         
