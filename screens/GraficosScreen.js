@@ -1,8 +1,12 @@
-import { Text, StyleSheet, View } from 'react-native'
+import { Text, StyleSheet, View, ImageBackground } from 'react-native'
 
 export default function GraficosScreen() {
     return (
-        <View style={styles.container}>
+        <ImageBackground 
+        source={require('../assets/fondoGraficas.png')}
+        resizeMode='cover'
+        style={styles.container}
+        >
             <Text>GraficosScreen</Text>
 
             <View style={styles.grafContainer}>
@@ -31,7 +35,7 @@ export default function GraficosScreen() {
                     <Text style={styles.montoText}> $500</Text>
                 </View>
             </View>            
-        </View>
+        </ImageBackground>
     )
 }
 

@@ -83,16 +83,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     /* backgroundColor: '#121212', */
+    position: 'relative',
   },
   botonContainer: {
     position: 'absolute',
-    top: 10,
+    top: 25,
     left: 15,
     width: 50,
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1000,
+    zIndex: 1001,
     /* backgroundColor: '#000e26', */
     borderRadius: 25,
     elevation: 4,
@@ -111,7 +112,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#000e26',
     paddingTop: 50,
     paddingHorizontal: 15,
-    zIndex: 999,
+    zIndex: 1000,
+    elevation: 9,
   },
   topContainer: {
     flexDirection: 'row',
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     borderBottomWidth: 3,
     borderBottomColor: 'white',
-    marginTop: 10,
+    marginTop: 20,
     paddingLeft: 5,
   },
   imagenUsuario: {

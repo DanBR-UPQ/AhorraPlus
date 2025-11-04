@@ -1,36 +1,40 @@
 import { useState } from 'react'
-import { StyleSheet, Text, View, Pressable } from 'react-native'
+import { StyleSheet, Text, View, Pressable, ImageBackground } from 'react-native'
 
 export default function TransaccionesScreen() {
     const [screen, setScreen] = useState('gastos')
     const [fecha, setFecha] = useState('dia')
 
   return (
-    <View style={styles.container}>
+    <ImageBackground 
+    source={require('../assets/fondoTransacciones.png')}
+    resizeMode='cover'
+    style={styles.container}
+    >
 
-        {/* TITULO */}
+        
         <View style={styles.tituloContainer}>
             <Text style={styles.titulo}>TRANSACCIONES</Text>
         </View>
 
-        {/* BOTONES GASTOS INGERSOS */}
+        
         <View style={styles.selectorContainer}>
             
             <View style={styles.gastosBoton}>
                 <Pressable onPress={() => setScreen('gastos')}>
-                    <Text style={styles.titulo}>GASTOS</Text>
+                    <Text style={styles.titulo2}>GASTOS</Text>
                 </Pressable>
             </View>
 
             <View style= {styles.ingresosBoton}>
                 <Pressable onPress={() => setScreen('ingresos')}>
-                    <Text style={styles.titulo}>INGRESOS</Text>
+                    <Text style={styles.titulo2}>INGRESOS</Text>
                 </Pressable>
             </View>
         </View>
 
 
-        {/* MAIN */}
+        
         <View style={styles.mainContainer}>
 
             <View style={styles.fechaContainer}>
@@ -64,13 +68,58 @@ export default function TransaccionesScreen() {
                 </View>
 
 
-                <Text>{screen}</Text>
-                <Text>{fecha}</Text>                
+                <Text style={styles.fecha2Texto}>23 de Septiembre de 2025</Text>
+
+                <View style={styles.elemContainer}>
+                    <View style={styles.elemIzq}>
+                        <Text style={styles.categoriaText}>Hogar</Text>
+                        <Text style={styles.comentarioText}>Pago de luz</Text>
+                    </View>
+                    <View style={styles.elemDer}>
+                        <Text style={styles.montoText}> $500</Text>
+                    </View>
+                </View>
+
+                <View style={styles.elemContainer}>
+                    <View style={styles.elemIzq}>
+                        <Text style={styles.categoriaText}>Comida</Text>
+                        <Text style={styles.comentarioText}>Supermercado</Text>
+                    </View>
+                    <View style={styles.elemDer}>
+                        <Text style={styles.montoText}> $1,200</Text>
+                    </View>
+                </View>
+
+                <View style={styles.elemContainer}>
+                    <View style={styles.elemIzq}>
+                        <Text style={styles.categoriaText}>Transporte</Text>
+                        <Text style={styles.comentarioText}>Gasolina</Text>
+                    </View>
+                    <View style={styles.elemDer}>
+                        <Text style={styles.montoText}> $350</Text>
+                    </View>
+                </View>
+
+                <Text style={styles.fecha2Texto}>7 de Agosto de 2025</Text>
+
+                <View style={styles.elemContainer}>
+                    <View style={styles.elemIzq}>
+                        <Text style={styles.categoriaText}>Entretenimiento</Text>
+                        <Text style={styles.comentarioText}>Cine</Text>
+                    </View>
+                    <View style={styles.elemDer}>
+                        <Text style={styles.montoText}> $280</Text>
+                    </View>
+                </View>
+
+
+                {/* <Text>{screen}</Text>
+                <Text>{fecha}</Text>  */}               
 
             </View>
         </View>
       
-    </View>
+    </ImageBackground>
   )
 }
 
@@ -83,31 +132,40 @@ const styles = StyleSheet.create({
     tituloContainer: {
         width: '100%',
         height: '5%',
-        /* backgroundColor: 'gray',  */
+        marginTop: 20,
+       /*  backgroundColor: 'gray',   */
         alignItems: 'center',
-        justifyContent: 'end',
+        justifyContent: 'flex-end',
     },
     titulo: {
         color: 'white',
-        fontSize: 13,
-        fontWeight: 600,
+        fontSize: 18,
+        fontWeight: 700,
+        /* fontFamily: 'Inter', */
+    },
+    titulo2: {
+        color: 'white',
+        fontSize: 15,
+        fontWeight: 400,
         /* fontFamily: 'Inter', */
     },
     selectorContainer: {
-        width: '60%',
+        width: '80%',
         height: '5%',
         flexDirection: 'row',
+        gap: 50,
         paddingBottom: 5,
-        /* backgroundColor: '#9b9898ff', */
+        /* backgroundColor: '#9b9898ff',  */
     },
     gastosBoton: {
         flex: 1,
-        justifyContent: 'end',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     ingresosBoton: {
         flex: 1,
-        justifyContent: 'end',
-        alignItems: 'end',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 
     mainContainer: {
@@ -144,7 +202,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         alignSelf: 'flex-start',
         fontSize: 10,
-        marginBottom: 5,
+        marginBottom: 10,
         marginStart: 10,
     },
 
@@ -153,6 +211,7 @@ const styles = StyleSheet.create({
         height: 50,
         backgroundColor: 'rgba(148, 154, 177, 100)',
         borderRadius: 10,
+        marginBottom: 10,
         flexDirection: 'row',
     },
     elemIzq: {
@@ -165,8 +224,9 @@ const styles = StyleSheet.create({
     elemDer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'end',
+        alignItems: 'flex-end',
         marginEnd: 15,
+        /* backgroundColor: 'red', */
     },
     categoriaText: {
         /* fontFamily: 'Inter', */
