@@ -20,6 +20,10 @@ export default function ObjetivosScreen() {
         </View>
     </View>
 
+    <View style={styles.botonCrear}>
+                    <Text style={styles.botonCrearTexto}>+ Crear</Text>
+                </View>
+
     </ScrollView>
     );
 }
@@ -77,5 +81,20 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 14,
         marginBottom: 5,
+    },
+    botonCrearTexto: {
+        color: 'black',
+        fontSize: 15,
+        fontWeight: 'bold',
+    },
+    botonCrear: {
+        backgroundColor: '#70b2f3ff', 
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 30,
+        width: 80,
+        alignSelf: 'end',
+        borderRadius: 25,
+        paddingVertical: 5, 
     },
 });
