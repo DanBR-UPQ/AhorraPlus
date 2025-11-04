@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { StyleSheet, Text, View, ScrollView, TextInput } from 'react-native'
-
+import { StyleSheet, Text, View, ScrollView, TextInput, ImageBackground, Pressable } from 'react-native'
 
 export default function RegistroIngresosScreen(){
 
@@ -8,79 +7,90 @@ export default function RegistroIngresosScreen(){
     const [comentario, setComentario] = useState('');
     const [monto, setMonto] = useState('');
     const [fecha, setFecha] = useState('');
+    const [screen, setScreen] = useState('gastos');
 
     return (
-    <ScrollView contentContainerStyle={styles.scrollContainer} style={styles.container}>
+    <ImageBackground 
+        source={require('../assets/fondoTransacciones.png')} 
+        resizeMode='cover' 
+        style={styles.background}
+    >
+        <ScrollView contentContainerStyle={styles.scrollContainer} style={styles.container}>
 
-        <View style={styles.titulo1}>
-            <Text style={styles.titulo2}>REGISTROS</Text>
-        </View>
-
-        <View style={styles.pestañasContainer}>
-            <View style={styles.pestaña}>
-                <Text style={styles.titulo2}>GASTOS</Text>
+            <View style={styles.titulo1}>
+                <Text style={styles.titulo2}>REGISTROS</Text>
             </View>
 
-            <View style={styles.pestaña}>
-                <Text style={styles.titulo2}>INGRESOS</Text>
-            </View>
-        </View>
+            <View style={styles.pestañasContainer}>
+                <View style={styles.pestaña}>
+                    <Pressable onPress={() => setScreen('gastos')}>
+                        <Text style={[styles.titulo2, screen === 'gastos' && { textDecorationLine: 'underline' }]}>GASTOS</Text>
+                    </Pressable>
+                </View>
 
-        <View style={styles.Formulario}>
-
-            <Text style={styles.datos}>Categoría</Text>
-            <TextInput
-                style={styles.inputContainer}
-                value={categoria}
-                onChangeText={setCategoria}
-                placeholder="Categoría"
-                placeholderTextColor="#000000ff"
-            />
-
-            <Text style={styles.datos}>Comentario</Text>
-            <TextInput
-                style={[styles.inputContainer, { textAlignVertical: 'top' }]}
-                value={comentario}
-                onChangeText={setComentario}
-                placeholder="Comentario"
-                placeholderTextColor="#666"
-            />
-
-            <Text style={styles.datos}>Monto</Text>
-            <TextInput
-                style={styles.inputContainer}
-                value={monto}
-                onChangeText={setMonto}
-                placeholder="Monto"
-                placeholderTextColor="#666"
-                keyboardType="numeric"
-            />
-
-
-            <Text style={styles.datos}>Fecha</Text>
-            <TextInput
-                style={styles.inputContainer}
-                value={fecha}
-                onChangeText={setFecha}
-                placeholder="DD/MM/AAAA"
-                placeholderTextColor="#666"
-            />
-
-
-            <View style={styles.botonAnadir}>
-                <Text style={styles.botonAnadirTexto}>Añadir</Text>
+                <View style={styles.pestaña}>
+                    <Pressable onPress={() => setScreen('ingresos')}>
+                        <Text style={[styles.titulo2, screen === 'ingresos' && { textDecorationLine: 'underline' }]}>INGRESOS</Text>
+                    </Pressable>
+                </View>
             </View>
 
-        </View>
+            <View style={styles.Formulario}>
 
-    </ScrollView>
+                <Text style={styles.datos}>Categoría</Text>
+                <TextInput
+                    style={styles.inputContainer}
+                    value={categoria}
+                    onChangeText={setCategoria}
+                    placeholder="Categoría"
+                    placeholderTextColor="#000000ff"
+                />
 
+                <Text style={styles.datos}>Comentario</Text>
+                <TextInput
+                    style={[styles.inputContainer, { textAlignVertical: 'top' }]}
+                    value={comentario}
+                    onChangeText={setComentario}
+                    placeholder="Comentario"
+                    placeholderTextColor="#666"
+                />
+
+                <Text style={styles.datos}>Monto</Text>
+                <TextInput
+                    style={styles.inputContainer}
+                    value={monto}
+                    onChangeText={setMonto}
+                    placeholder="Monto"
+                    placeholderTextColor="#666"
+                    keyboardType="numeric"
+                />
+
+                <Text style={styles.datos}>Fecha</Text>
+                <TextInput
+                    style={styles.inputContainer}
+                    value={fecha}
+                    onChangeText={setFecha}
+                    placeholder="DD/MM/AAAA"
+                    placeholderTextColor="#666"
+                />
+
+                <View style={styles.botonAnadir}>
+                    <Text style={styles.botonAnadirTexto}>Añadir</Text>
+                </View>
+
+            </View>
+
+        </ScrollView>
+    </ImageBackground>
     )
 }
 
 const styles = StyleSheet.create({
+    background:{
+        flex: 1,
+    },
     container:{
-        backgroundColor: '#326E9B',
+        /* backgroundColor: 'rgba(50, 110, 155, 0.8)', */ 
     },
     titulo1: {
         width: '100%',
@@ -94,8 +104,10 @@ const styles = StyleSheet.create({
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal: 15,
+        paddingHorizontal: 55,
+        marginTop: 10,
         position: 'absolute',
+        /* backgroundColor: 'red', */
         top: 60,
     },
     pestaña: {

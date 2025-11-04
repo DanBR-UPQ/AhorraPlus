@@ -1,22 +1,34 @@
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, ImageBackground } from 'react-native';
 import { useState } from 'react';
 
-export default function Crearpagos() {
+export default function Editarpago() {
   const [form, setForms] = useState({
-    nombre: '',
-    fecha: '',
-    hora: '',
-    monto: '',
+    nombre: 'Pago de mantenimiento',
+    fecha: '2025-11-15',
+    hora: '12:00',
+    monto: '1500',
   });
 
+  const handleAceptar = () => {
+    console.log('Pago actualizado:', form);
+  };
+
+  const handleCancelar = () => {
+    console.log('Edición cancelada');
+  };
+
+  const handleEliminar = () => {
+    console.log('Pago eliminado');
+  };
+
   return (
-    <ImageBackground 
+    <ImageBackground
     source={require('../assets/fondoEditarPago.png')}
-    resizeMode='cover' 
-    style={styles.background}
+    resizeMode='cover'
+    style={styles.background}  
     >
       <View style={styles.contenedor}>
-        <Text style={styles.titulo}>Crear próximo pago</Text>
+        <Text style={styles.titulo}>Editar pago</Text>
 
         <TextInput
           placeholder="Nombre del pago"
@@ -48,9 +60,19 @@ export default function Crearpagos() {
           placeholderTextColor="#999"
         />
 
-        <TouchableOpacity style={styles.boton}>
-          <Text style={styles.textoBoton}>Guardar Pago</Text>
-        </TouchableOpacity>
+        <View style={styles.botonesContainer}>
+          <TouchableOpacity style={[styles.boton, styles.botonAceptar]} onPress={handleAceptar}>
+            <Text style={styles.textoBoton}>Aceptar</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.boton, styles.botonCancelar]} onPress={handleCancelar}>
+            <Text style={styles.textoBoton}>Cancelar</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.boton, styles.botonEliminar]} onPress={handleEliminar}>
+            <Text style={styles.textoBoton}>Eliminar</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ImageBackground>
   );
@@ -91,12 +113,26 @@ const styles = StyleSheet.create({
     color: '#333',
     backgroundColor: '#f9f9f9',
   },
+  botonesContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
   boton: {
-    backgroundColor: '#007AFF',
-    padding: 15,
+    flex: 1,
+    padding: 14,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 10,
+    marginHorizontal: 4,
+  },
+  botonAceptar: {
+    backgroundColor: '#007AFF',
+  },
+  botonCancelar: {
+    backgroundColor: '#888',
+  },
+  botonEliminar: {
+    backgroundColor: '#D9534F',
   },
   textoBoton: {
     color: '#fff',

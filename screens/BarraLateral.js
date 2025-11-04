@@ -1,47 +1,52 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import AgregarObjetivoScreen from '../screens/AgregarObjetivoScreen';
 import Crearpagos from '../screens/Crearpagos';
 import CrearScreen from '../screens/CrearScreen';
+import EditarPago from '../screens/EditarPago';
+import EditarRegistroScreen from '../screens/EditarRegistroScreen';
 import GraficosScreen from '../screens/GraficosScreen';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
+import ObjetivosScreen from '../screens/ObjetivosScreen';
 import PagosScreen from '../screens/PagosScreen';
 import RegistroIngresosScreen from '../screens/RegistroIngresosScreen';
 import TestScreen from '../screens/TestScreen';
 import TransaccionesScreen from '../screens/TransaccionesScreen';
 
 export default function BarraLateral() {
-  const [barraAbierta, setbarraAbierta] = useState(false);
-  const [screen, setScreen] = useState('test');
+  const [barraAbierta, setBarraAbierta] = useState(false);
+  const [screen, setScreen] = useState('Test');
 
   const screens = {
-    'test': <TestScreen/>,
     'Inicio': <HomeScreen />,
+    'Login': <LoginScreen />,
     'Transacciones': <TransaccionesScreen />,
-    'Presupuesto': <RegistroIngresosScreen />,
+    'Crear registro': <RegistroIngresosScreen />,
+    'Editar registro': <EditarRegistroScreen />,
     'Gráficas': <GraficosScreen />,
-    'Pagos programados': <Crearpagos />,
-    'Objetivos': <AgregarObjetivoScreen />,
+    'Pagos': <PagosScreen />,
+    'Crear pago': <Crearpagos />,
+    'Editar pago': <EditarPago />,
+    'Agregar objetivo': <AgregarObjetivoScreen />,
+    'Objetivos': <ObjetivosScreen />,
+    'Crear nueva cuenta': <CrearScreen />,
+    'Test': <TestScreen />,
   };
 
   return (
     <View style={styles.container}>
-      
       <View style={styles.container}>{screens[screen]}</View>
 
-      
       <TouchableOpacity
         style={styles.botonContainer}
-        onPress={() => setbarraAbierta(!barraAbierta)}
+        onPress={() => setBarraAbierta(!barraAbierta)}
       >
         <Text style={styles.menuBoton}>☰</Text>
       </TouchableOpacity>
 
-      
       {barraAbierta && (
         <View style={styles.barraContainer}>
-          
           <View style={styles.topContainer}>
             <Image
               source={require('../assets/usuario.png')}
@@ -50,29 +55,30 @@ export default function BarraLateral() {
             <Text style={styles.usuarioText}>Usuario</Text>
           </View>
 
-          
-          {Object.keys(screens).map((name) => (
-            <TouchableOpacity
-              key={name}
-              style={[
-                styles.menuItem,
-                screen === name && styles.menuItemActivo,
-              ]}
-              onPress={() => {
-                setScreen(name);
-                setbarraAbierta(false); 
-              }}
-            >
-              <Text
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {Object.keys(screens).map((name) => (
+              <TouchableOpacity
+                key={name}
                 style={[
-                  styles.menuText,
-                  screen === name && styles.menuTextActivo,
+                  styles.menuItem,
+                  screen === name && styles.menuItemActivo,
                 ]}
+                onPress={() => {
+                  setScreen(name);
+                  setBarraAbierta(false);
+                }}
               >
-                {name}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                <Text
+                  style={[
+                    styles.menuText,
+                    screen === name && styles.menuTextActivo,
+                  ]}
+                >
+                  {name}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
       )}
     </View>
@@ -82,7 +88,6 @@ export default function BarraLateral() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    /* backgroundColor: '#121212', */
     position: 'relative',
   },
   botonContainer: {
@@ -94,7 +99,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1001,
-    /* backgroundColor: '#000e26', */
     borderRadius: 25,
     elevation: 4,
   },
