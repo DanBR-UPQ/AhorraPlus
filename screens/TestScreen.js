@@ -9,6 +9,7 @@ import HomeScreen from './HomeScreen'
 import PagosScreen from './PagosScreen'
 
 import Crearpagos from './Crearpagos'
+import Detallespagos from './Detallespagos'
 
 
 export default function TestScreen() {
@@ -32,6 +33,8 @@ export default function TestScreen() {
         return<CrearScreen/>
       case 'home':
         return<HomeScreen/>
+        case 'Detalles':
+        return<Detallespagos/>
 
      
 
@@ -52,6 +55,7 @@ export default function TestScreen() {
                 <Button title='RegistroIngresos' onPress={() => setVist('RegIn')}/>
                  < Button title= 'PagosScreen' onPress={() => setVist('Pagos')}/>
                   < Button title= 'CrearPago' onPress={() => setVist('CrearPago')}/>
+                    < Button title= 'Detalles' onPress={() => setVist('Detalles')}/>
 
 
           </View>
