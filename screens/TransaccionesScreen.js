@@ -19,33 +19,72 @@ export default function TransaccionesScreen() {
 
         
         <View style={styles.selectorContainer}>
-            
             <View style={styles.gastosBoton}>
                 <Pressable onPress={() => setScreen('gastos')}>
-                    <Text style={styles.titulo2}>GASTOS</Text>
+                    <Text
+                        style={[
+                            styles.titulo2,
+                            screen === 'gastos' && styles.textoSeleccionado
+                        ]}
+                    >
+                        GASTOS
+                    </Text>
                 </Pressable>
             </View>
 
-            <View style= {styles.ingresosBoton}>
+            <View style={styles.ingresosBoton}>
                 <Pressable onPress={() => setScreen('ingresos')}>
-                    <Text style={styles.titulo2}>INGRESOS</Text>
+                    <Text
+                        style={[
+                            styles.titulo2,
+                            screen === 'ingresos' && styles.textoSeleccionado
+                        ]}
+                    >
+                        INGRESOS
+                    </Text>
                 </Pressable>
             </View>
         </View>
 
-
-        
         <View style={styles.mainContainer}>
-
             <View style={styles.fechaContainer}>
                 <View style={styles.fechaPressable}>
-                    <Pressable onPress={() => setFecha('dia')}><Text style={styles.fechaTexto}>DÍA</Text></Pressable>
+                    <Pressable onPress={() => setFecha('dia')}>
+                        <Text
+                            style={[
+                                styles.fechaTexto,
+                                fecha === 'dia' && styles.textoSeleccionadoFecha
+                            ]}
+                        >
+                            DÍA
+                        </Text>
+                    </Pressable>
                 </View>
+
                 <View style={styles.fechaPressable}>
-                    <Pressable onPress={() => setFecha('mes')}><Text style={styles.fechaTexto}>MES</Text></Pressable>
+                    <Pressable onPress={() => setFecha('mes')}>
+                        <Text
+                            style={[
+                                styles.fechaTexto,
+                                fecha === 'mes' && styles.textoSeleccionadoFecha
+                            ]}
+                        >
+                            MES
+                        </Text>
+                    </Pressable>
                 </View>
+
                 <View style={styles.fechaPressable}>
-                    <Pressable onPress={() => setFecha('anio')}><Text style={styles.fechaTexto}>AÑO</Text></Pressable>
+                    <Pressable onPress={() => setFecha('anio')}>
+                        <Text
+                            style={[
+                                styles.fechaTexto,
+                                fecha === 'anio' && styles.textoSeleccionadoFecha
+                            ]}
+                        >
+                            AÑO
+                        </Text>
+                    </Pressable>
                 </View>
             </View>
 
@@ -149,6 +188,10 @@ const styles = StyleSheet.create({
         fontWeight: 400,
         /* fontFamily: 'Inter', */
     },
+    textoSeleccionado: {
+        textDecorationLine: 'underline',
+        fontWeight: '700',
+    },
     selectorContainer: {
         width: '80%',
         height: '5%',
@@ -190,6 +233,10 @@ const styles = StyleSheet.create({
         color: '#42688eff',
         fontSize: 13,
         /* fontFamily: 'Inter', */
+    },
+    textoSeleccionadoFecha: {
+        textDecorationLine: 'underline',
+        fontWeight: '700',
     },
     transaccionesContainer: {
         flex: 15,
