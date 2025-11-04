@@ -14,7 +14,7 @@ export default function TransaccionesScreen() {
 
         
         <View style={styles.tituloContainer}>
-            <Text style={styles.titulo}>TRANSACCIONES</Text>
+            <Text style={styles.titulo}>Transacciones</Text>
         </View>
 
         
@@ -73,10 +73,10 @@ export default function TransaccionesScreen() {
                 <View style={styles.elemContainer}>
                     <View style={styles.elemIzq}>
                         <Text style={styles.categoriaText}>Hogar</Text>
-                        <Text style={styles.comentarioText}>Pago de luz</Text>
+                        <Text style={styles.comentarioText}>Pago de internet</Text>
                     </View>
                     <View style={styles.elemDer}>
-                        <Text style={styles.montoText}> $500</Text>
+                        <Text style={styles.montoText}> $420</Text>
                     </View>
                 </View>
 
