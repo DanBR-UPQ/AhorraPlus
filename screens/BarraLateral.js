@@ -21,7 +21,7 @@ export default function BarraLateral() {
     'Transacciones': <TransaccionesScreen />,
     'Presupuesto': <RegistroIngresosScreen />,
     'Gráficas': <GraficosScreen />,
-    'Pagos programados': <Crearpagos />,
+    'Pagos': <Crearpagos />,
     'Objetivos': <AgregarObjetivoScreen />,
   };
 
