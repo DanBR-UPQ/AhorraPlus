@@ -1,22 +1,34 @@
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, ImageBackground } from 'react-native';
 import { useState } from 'react';
 
-export default function Crearpagos() {
+export default function Editarpago() {
   const [form, setForms] = useState({
-    nombre: '',
-    fecha: '',
-    hora: '',
-    monto: '',
+    nombre: 'Pago de mantenimiento',
+    fecha: '2025-11-15',
+    hora: '12:00',
+    monto: '1500',
   });
 
+  const handleAceptar = () => {
+    console.log('Pago actualizado:', form);
+  };
+
+  const handleCancelar = () => {
+    console.log('Edición cancelada');
+  };
+
+  const handleEliminar = () => {
+    console.log('Pago eliminado');
+  };
+
   return (
-    <ImageBackground 
+    <ImageBackground
     source={require('../assets/fondoEditarPago.png')}
-    resizeMode='cover' 
-    style={styles.background}
+    resizeMode='cover'
+    style={styles.background}  
     >
       <View style={styles.contenedor}>
-        <Text style={styles.titulo}>Crear próximo pago</Text>
+        <Text style={styles.titulo}>Editar pago</Text>
 
         <TextInput
           placeholder="Nombre del pago"
@@ -48,9 +60,19 @@ export default function Crearpagos() {
           placeholderTextColor="#999"
         />
 
-        <TouchableOpacity style={styles.boton}>
-          <Text style={styles.textoBoton}>Guardar Pago</Text>
-        </TouchableOpacity>
+        <View style={styles.botonesContainer}>
+          <TouchableOpacity style={[styles.boton, styles.botonAceptar]} onPress={handleAceptar}>
+            <Text style={styles.textoBoton}>Aceptar</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.boton, styles.botonCancelar]} onPress={handleCancelar}>
+            <Text style={styles.textoBoton}>Cancelar</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.boton, styles.botonEliminar]} onPress={handleEliminar}>
+            <Text style={styles.textoBoton}>Eliminar</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ImageBackground>
   );
@@ -59,14 +81,13 @@ export default function Crearpagos() {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: '#052659',
+    backgroundColor: '#021024',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
   },
   contenedor: {
-    width: '100%',
-    backgroundColor: '#fff',
+    width: '90%',
+    backgroundColor: '#7DA0CA',
     borderRadius: 12,
     padding: 20,
     elevation: 4,
@@ -84,20 +105,35 @@ const styles = StyleSheet.create({
   },
   entrada: {
     borderWidth: 1,
-    borderColor: '#C1E8FF',
+    borderColor: '#ccc',
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,
     fontSize: 16,
-    color: '#052659',
-    backgroundColor: '#F9F9F9',
+    color: '#333',
+    backgroundColor: '#f9f9f9',
+  },
+  botonesContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
   },
   boton: {
-    backgroundColor: '#5483B3',
-    paddingVertical: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
+      flex: 1,
+      marginHorizontal: 5,
+      borderRadius: 25,
+      paddingVertical: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+  },
+  botonAceptar: {
+    backgroundColor: '#007AFF',
+  },
+  botonCancelar: {
+    backgroundColor: '#888',
+  },
+  botonEliminar: {
+    backgroundColor: '#D9534F',
   },
   textoBoton: {
     color: '#fff',

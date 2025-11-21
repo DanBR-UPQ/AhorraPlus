@@ -1,6 +1,10 @@
-import { Text, StyleSheet, View, ImageBackground, Image } from 'react-native'
+import { Text, StyleSheet, View, ImageBackground, Image, Pressable } from 'react-native'
+import { useState } from 'react'
 
 export default function GraficosScreen() {
+    const [seleccionado, setSeleccionado] = useState('General')
+    const [tiempoSeleccionado, setTiempoSeleccionado] = useState('Día')
+
     return (
         <ImageBackground 
         source={require('../assets/fondoGraficas.png')}
@@ -11,17 +15,29 @@ export default function GraficosScreen() {
 
 
             <View style={styles.fecha2Container}>
-                <Text style={styles.titulo3}>General</Text>
-                <Text style={styles.titulo3}>Gastos</Text>
-                <Text style={styles.titulo3}>Ingresos</Text>                
+                <Pressable onPress={() => setSeleccionado('General')}>
+                    <Text style={[styles.titulo3, seleccionado === 'General' && { textDecorationLine: 'underline' }]}>General</Text>
+                </Pressable>
+                <Pressable onPress={() => setSeleccionado('Gastos')}>
+                    <Text style={[styles.titulo3, seleccionado === 'Gastos' && { textDecorationLine: 'underline' }]}>Gastos</Text>
+                </Pressable>
+                <Pressable onPress={() => setSeleccionado('Ingresos')}>
+                    <Text style={[styles.titulo3, seleccionado === 'Ingresos' && { textDecorationLine: 'underline' }]}>Ingresos</Text>
+                </Pressable>               
             </View>
 
 
             <View style={styles.grafContainer}>
                 <View style={styles.fechaContainer}>
-                    <Text style={styles.titulo2}>Día</Text>
-                    <Text style={styles.titulo2}>Mes</Text>
-                    <Text style={styles.titulo2}>Año</Text>
+                    <Pressable onPress={() => setTiempoSeleccionado('Día')}>
+                        <Text style={[styles.titulo2, tiempoSeleccionado === 'Día' && { textDecorationLine: 'underline' }]}>Día</Text>
+                    </Pressable>
+                    <Pressable onPress={() => setTiempoSeleccionado('Mes')}>
+                        <Text style={[styles.titulo2, tiempoSeleccionado === 'Mes' && { textDecorationLine: 'underline' }]}>Mes</Text>
+                    </Pressable>
+                    <Pressable onPress={() => setTiempoSeleccionado('Año')}>
+                        <Text style={[styles.titulo2, tiempoSeleccionado === 'Año' && { textDecorationLine: 'underline' }]}>Año</Text>
+                    </Pressable>
                 </View>
                 
                 <Image
@@ -30,6 +46,7 @@ export default function GraficosScreen() {
                 style= {styles.graficaImage}
                 /> 
             </View>
+
 
 
 

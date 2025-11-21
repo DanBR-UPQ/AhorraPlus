@@ -6,7 +6,9 @@ import RegistroIngresosScreen from './RegistroIngresosScreen'
 import CrearScreen from './CrearScreen'
 import HomeScreen from './HomeScreen'
 import GraficosScreen from './GraficosScreen'
-import ObjetivosScreen from './ObjetivosScreen'
+import ObjetivosScreen from './PresupuestoScreen'
+import Editarpago from './EditarPago'
+import EditarRegistroScreen from './EditarRegistroScreen'
 
 
 
@@ -16,6 +18,8 @@ import Crearpagos from './Crearpagos'
 import Detallespagos from './Detallespagos'
 
 import AngregarObjetivoScreen from './AgregarObjetivoScreen'
+
+import AngregarObjetivoScreen from './AgregarPresupuestoScreen'
 
 
 
@@ -34,6 +38,10 @@ export default function TestScreen() {
       return<LoginScreen/>
       case 'Pagos':
       return<PagosScreen/>
+      case 'ed':
+      return<Editarpago/>
+      case 'er':
+      return <EditarRegistroScreen></EditarRegistroScreen>
 
       case 'CrearPago':
       return<Crearpagos/>
@@ -77,6 +85,8 @@ export default function TestScreen() {
             < Button title= 'CrearPago' onPress={() => setVist('CrearPago')}/>
             < Button title= 'Añadir Objetivo' onPress={() => setVist('AgrObj')}/>
             < Button title= 'Gráficas' onPress={() => setVist('graf')}/>
+            < Button title= 'editar pago' onPress={() => setVist('ed')}/>
+            < Button title= 'editar registro' onPress={() => setVist('er')}/>
 
 
 
