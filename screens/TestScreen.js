@@ -17,9 +17,9 @@ import PagosScreen from './PagosScreen'
 import Crearpagos from './Crearpagos'
 import Detallespagos from './Detallespagos'
 
-import AngregarObjetivoScreen from './AgregarObjetivoScreen'
+/* import AngregarObjetivoScreen from './AgregarObjetivoScreen' */
 
-import AngregarObjetivoScreen from './AgregarPresupuestoScreen'
+import AngregarPresupuestoScreen from './AgregarPresupuestoScreen'
 
 
 
@@ -54,7 +54,7 @@ export default function TestScreen() {
         return<Detallespagos/>
 
       case 'AgrObj':
-        return<AngregarObjetivoScreen/>
+        return<AngregarPresupuestoScreen/>
       case 'objetivos':
         return<ObjetivosScreen/>
 
