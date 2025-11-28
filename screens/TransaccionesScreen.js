@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { StyleSheet, Text, View, Pressable, ImageBackground } from 'react-native'
+import { StyleSheet, Text, View, Pressable, ImageBackground, FlatList } from 'react-native'
 
 export default function TransaccionesScreen() {
     const [screen, setScreen] = useState('gastos')
@@ -103,6 +103,7 @@ export default function TransaccionesScreen() {
                     </View>
                     <View style={styles.elemDer}>
                         <Text style={styles.montoText}> $500</Text>
+                        <Text style={styles.comentarioText}>14 Feb 2025</Text>
                     </View>
                 </View>
 
@@ -290,6 +291,10 @@ const styles = StyleSheet.create({
         /* fontFamily: 'Inter', */
         fontWeight: '600',
         fontSize: 16,
+    },
+    emptyList: {
+        flex: 1,
+        justifyContent: 'center',
     },
 
 })

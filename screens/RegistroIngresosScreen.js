@@ -1,13 +1,64 @@
-import { useState } from 'react'
-import { StyleSheet, Text, View, ScrollView, TextInput, ImageBackground, Pressable } from 'react-native'
+import { useState, useEffect, useRef } from 'react'
+import { StyleSheet, Text, View, ScrollView, TextInput, ImageBackground, Pressable, TouchableOpacity, Alert, Modal } from 'react-native'
+import {TransaccionController} from "../controllers/TransaccionController"
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function RegistroIngresosScreen(){
 
-    const [categoria, setCategoria] = useState('');
+    const [categoria, setCategoria] = useState('')
     const [comentario, setComentario] = useState('');
     const [monto, setMonto] = useState('');
+    const [showCalendar, setShowCalendar] = useState(false);    
     const [fecha, setFecha] = useState('');
-    const [screen, setScreen] = useState('gastos');
+    const [screen, setScreen] = useState('Gasto');
+    const [dropdownVisible, setDropdownVisible] = useState(false)
+
+
+    const categorias = [
+    "Servicios",
+    "Entretenimiento",
+    "Despensa",
+    "Transporte",
+    "Otro",
+    ]
+    const categorias2 = [
+    "Salario",
+    "Inversiones",
+    "Regalos",
+    "Otro"
+    ]
+
+
+    const controller =  useRef(new TransaccionController()).current // new TransaccionController()
+    useEffect(() => {
+        controller.initialize()
+    }, [])
+
+
+
+    const handleAgregarTransaccion = async (monto, categoria, fecha, descripcion, tipo) => {
+    try {
+        const nueva = await controller.crearTransaccion(
+        monto,
+        categoria,
+        fecha,
+        descripcion,
+        tipo
+        )
+
+        Alert.alert(
+        "Guardada",
+        `Transacción creada exitosamente`
+        )
+
+        return nueva
+    } catch (error) {
+        Alert.alert("Error", error.message)
+    }
+    }
+
+
+
 
     return (
     <ImageBackground 
@@ -23,28 +74,62 @@ export default function RegistroIngresosScreen(){
 
             <View style={styles.pestañasContainer}>
                 <View style={styles.pestaña}>
-                    <Pressable onPress={() => setScreen('gastos')}>
-                        <Text style={[styles.titulo2, screen === 'gastos' && { textDecorationLine: 'underline' }]}>GASTOS</Text>
+                    <Pressable onPress={() => setScreen('Gasto')}>
+                        <Text style={[styles.titulo2, screen === 'Gasto' && { textDecorationLine: 'underline' }]}>GASTOS</Text>
                     </Pressable>
                 </View>
 
                 <View style={styles.pestaña}>
-                    <Pressable onPress={() => setScreen('ingresos')}>
-                        <Text style={[styles.titulo2, screen === 'ingresos' && { textDecorationLine: 'underline' }]}>INGRESOS</Text>
+                    <Pressable onPress={() => setScreen('Ingreso')}>
+                        <Text style={[styles.titulo2, screen === 'Ingreso' && { textDecorationLine: 'underline' }]}>INGRESOS</Text>
                     </Pressable>
                 </View>
             </View>
 
+
+
+
+
+
+
             <View style={styles.Formulario}>
 
                 <Text style={styles.datos}>Categoría</Text>
-                <TextInput
-                    style={styles.inputContainer}
-                    value={categoria}
-                    onChangeText={setCategoria}
-                    placeholder="Categoría"
-                    placeholderTextColor="#000000ff"
-                />
+                <TouchableOpacity
+                style={styles.inputContainer}
+                onPress={() => setDropdownVisible(true)}
+                >
+                <Text style={styles.textCategoria}>▽  {categoria}</Text>
+                </TouchableOpacity>
+
+
+                <Modal visible={dropdownVisible} transparent animationType="fade">
+                <TouchableOpacity
+                    style={styles.modalContainer}
+                    onPress={() => setDropdownVisible(false)}
+                >
+                    <View
+                    style={styles.modalElememto}
+                    >
+                    {(screen === "Gasto" ? categorias : categorias2).map((cat) => (
+                        <TouchableOpacity
+                        key={cat}
+                        onPress={() => {
+                            setCategoria(cat)
+                            setDropdownVisible(false)
+                        }}
+                        style={styles.modalElemento2}
+                        >
+                        <Text style={styles.textCategoria}>{cat}</Text>
+                        </TouchableOpacity>
+                    ))}
+                    </View>
+                </TouchableOpacity>
+                </Modal>
+
+
+
+
 
                 <Text style={styles.datos}>Comentario</Text>
                 <TextInput
@@ -66,17 +151,38 @@ export default function RegistroIngresosScreen(){
                 />
 
                 <Text style={styles.datos}>Fecha</Text>
-                <TextInput
-                    style={styles.inputContainer}
-                    value={fecha}
-                    onChangeText={setFecha}
-                    placeholder="DD/MM/AAAA"
-                    placeholderTextColor="#666"
-                />
+                <TouchableOpacity onPress={() => setShowCalendar(true)}>
+                    <TextInput
+                        style={styles.inputContainer}
+                        value={fecha}
+                        placeholder="DD/MM/AAAA"
+                        placeholderTextColor="#666"
+                        editable={false}       
+                        pointerEvents="none"   
+                    />
+                </TouchableOpacity>
 
-                <View style={styles.botonAnadir}>
+                {showCalendar && (
+                    <DateTimePicker
+                        value={new Date()}
+                        mode="date"
+                        display="calendar"
+                        onChange={(event, selectedDate) => {
+                            setShowCalendar(false);
+
+                            if (selectedDate) {
+                                const f = selectedDate.toLocaleDateString("es-MX");
+                                setFecha(f);
+                            }
+                        }}
+                    />
+                )}
+
+                <TouchableOpacity style={styles.botonAnadir}
+                onPress={() => handleAgregarTransaccion(monto, categoria, fecha, comentario, screen)}
+                >
                     <Text style={styles.botonAnadirTexto}>Añadir</Text>
-                </View>
+                </TouchableOpacity>
 
             </View>
 
@@ -162,5 +268,28 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingTop: 20,
         paddingBottom: 50,
+    },
+    textCategoria: {
+        fontSize: 15,
+        color: '#666', 
+        marginBottom: 5,
+        marginTop: 10,
+    },
+    modalContainer: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.3)",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    modalElememto: {
+        width: "80%",
+        backgroundColor: "#fff",
+        borderRadius: 10,
+        padding: 10
+    },
+    modalElemento2: {
+        padding: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: "#eee"
     }
 })

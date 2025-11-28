@@ -12,7 +12,7 @@ export class TransaccionController {
 
     async obtenerTransacciones() {
         try {
-            const data = await DatabaseService.getAll()
+            const data = await DatabaseService.getAllTransaccion()
             return data.map(t => new Transaccion(
                 t.id,
                 t.monto,
@@ -36,7 +36,7 @@ export class TransaccionController {
             Transaccion.validarDescripcion(descripcion || "")
             Transaccion.validarTipo(tipo)
 
-            const nueva = await DatabaseService.add(
+            const nueva = await DatabaseService.addTransaccion(
                 monto,
                 categoria,
                 fecha,
@@ -71,7 +71,7 @@ export class TransaccionController {
             if (descripcion !== undefined) Transaccion.validarDescripcion(descripcion)
             if (tipo !== undefined) Transaccion.validarTipo(tipo)
 
-            const actualizado = await DatabaseService.update(id, nuevosValores)
+            const actualizado = await DatabaseService.updateTransaccion(id, nuevosValores)
 
             this.notifyListeners()
 
@@ -93,7 +93,7 @@ export class TransaccionController {
 
     async eliminarTransaccion(id) {
         try {
-            await DatabaseService.delete(id)
+            await DatabaseService.deleteTransaccion(id)
 
             this.notifyListeners()
 
