@@ -31,7 +31,6 @@ export default function EditarRegistroScreen() {
           <Text style={styles.titulo2}>EDITAR REGISTRO</Text>
         </View>
 
-        {/* Pestañas Gasto / Ingreso */}
         <View style={styles.pestañasContainer}>
           <Pressable onPress={() => setTipo('Gasto')} style={styles.pestaña}>
             <Text
@@ -97,7 +96,6 @@ export default function EditarRegistroScreen() {
             placeholderTextColor="#666"
           />
 
-          {/* Botones inferiores */}
           <View style={styles.botonesContainer}>
             <Pressable style={[styles.boton, styles.botonAceptar]} onPress={handleAceptar}>
               <Text style={styles.botonTexto}>Aceptar</Text>
@@ -197,12 +195,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   boton: {
-    flex: 1,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 10,
-    marginHorizontal: 4,
+      flex: 1,
+      marginHorizontal: 5,
+      borderRadius: 25,
+      paddingVertical: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
   },
   botonAceptar: {
     backgroundColor: '#007AFF',

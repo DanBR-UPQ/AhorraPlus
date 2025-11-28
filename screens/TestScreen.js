@@ -6,7 +6,7 @@ import RegistroIngresosScreen from './RegistroIngresosScreen'
 import CrearScreen from './CrearScreen'
 import HomeScreen from './HomeScreen'
 import GraficosScreen from './GraficosScreen'
-import ObjetivosScreen from './ObjetivosScreen'
+import ObjetivosScreen from './PresupuestoScreen'
 import Editarpago from './EditarPago'
 import EditarRegistroScreen from './EditarRegistroScreen'
 
@@ -15,7 +15,14 @@ import EditarRegistroScreen from './EditarRegistroScreen'
 import PagosScreen from './PagosScreen'
 
 import Crearpagos from './Crearpagos'
-import AngregarObjetivoScreen from './AgregarObjetivoScreen'
+import Detallespagos from './Detallespagos'
+
+
+
+
+/* import AngregarObjetivoScreen from './AgregarObjetivoScreen' */
+
+import AngregarPresupuestoScreen from './AgregarPresupuestoScreen'
 
 
 
@@ -46,8 +53,11 @@ export default function TestScreen() {
         return<CrearScreen/>
       case 'home':
         return<HomeScreen/>
+        case 'Detalles':
+        return<Detallespagos/>
+
       case 'AgrObj':
-        return<AngregarObjetivoScreen/>
+        return<AngregarPresupuestoScreen/>
       case 'objetivos':
         return<ObjetivosScreen/>
 
@@ -67,6 +77,11 @@ export default function TestScreen() {
             <Button title='crear' onPress={() => setVist('crear')}/>
             <Button title='login' onPress={() => setVist('Login')}/>
             <Button title='home' onPress={() => setVist('home')}/>
+              <Button title='login' onPress={() => setVist('Login')}/>
+                <Button title='RegistroIngresos' onPress={() => setVist('RegIn')}/>
+                 < Button title= 'PagosScreen' onPress={() => setVist('Pagos')}/>
+                  < Button title= 'CrearPago' onPress={() => setVist('CrearPago')}/>
+                    < Button title= 'Detalles' onPress={() => setVist('Detalles')}/>
             <Button title='Objetivos' onPress={() => setVist('objetivos')}/>
             <Button title='RegistroIngresos' onPress={() => setVist('RegIn')}/>
             < Button title= 'PagosScreen' onPress={() => setVist('Pagos')}/>

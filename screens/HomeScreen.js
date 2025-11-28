@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
 
     },
     letra:{
-        fontSize:'30',
+        fontSize:30,
        color:'white'
     },
     pagos:{
