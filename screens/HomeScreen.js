@@ -28,9 +28,13 @@ const[saldo,setSaldo]=useState("500")
             <Text style={styles.concepto}> Hogar</Text>
          <Text style={styles.tipo}> pago de luz</Text>
          </View>
-         <View>
-         <Text style={styles.monto}> $500</Text>
-         </View>
+         <View style={styles.derecha}>
+    <Text style={styles.monto}>$500</Text>
+    <Image 
+      source={require('../assets/lapiz.png')} 
+      style={styles.lapiz} 
+    />
+  </View>
      </View>
     </View>
     )
@@ -121,5 +125,15 @@ textoBoton: {
   fontSize: 16,
   
 },
+derecha:{
+    flexDirection:"row",
+    alignItems:"center",
+},lapiz: {
+  width: 18,              
+  height: 18,
+  marginLeft: 5,         
+  resizeMode: 'contain',  
+}
+
    
 })
