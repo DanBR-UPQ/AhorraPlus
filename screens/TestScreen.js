@@ -17,6 +17,9 @@ import PagosScreen from './PagosScreen'
 import Crearpagos from './Crearpagos'
 import Detallespagos from './Detallespagos'
 
+
+
+
 /* import AngregarObjetivoScreen from './AgregarObjetivoScreen' */
 
 import AngregarPresupuestoScreen from './AgregarPresupuestoScreen'

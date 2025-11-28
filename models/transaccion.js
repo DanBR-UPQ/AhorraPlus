@@ -4,10 +4,10 @@ export class Transaccion {
     constructor(id, monto, categoria, fecha, descripcion, tipo) {
             this.id = id;
             this.monto = monto;
-            this.categoria = categoria;
+            this.categoria = categoria; // Servicios, Despensa, etc. La lista es los de abajo
             this.fecha = fecha;
             this.descripcion = descripcion;
-            this.tipo = tipo;
+            this.tipo = tipo; // solo Gasto / Ingreso
     }
     
     static validarMonto(monto) {

@@ -1,4 +1,4 @@
-import { Text, StyleSheet, View, ImageBackground,TextInput, Image, Button} from 'react-native'
+import { Text, StyleSheet, View, ImageBackground,TextInput, Image, Button,Alert} from 'react-native'
 import React, { useState } from 'react'
 
 
@@ -8,6 +8,15 @@ import React, { useState } from 'react'
 export default function LoginScreen () {
 const[correo, setCorreo]= useState('ingresa un correo o telefono');
 const[clave, setClave] = useState('ingresa una clave');
+const handleLogin = () => {
+  if (correo.trim() === '' || clave.trim() === '') {
+    Alert.alert('Error', 'rellena todos los campos');
+    return;
+  }
+
+  Alert.alert( 'Inicio de sesión correcto.');
+};
+
     return (
         <View style={styles.background}>
 
@@ -31,7 +40,7 @@ const[clave, setClave] = useState('ingresa una clave');
             onChangeText={(pas)=>setClave(pas)}
             placeholderTextColor="rgba(255,255,255,0.7)"
             />
-            <Button title='iniciar sesion' style={styles.boton}></Button>
+            <Button title='iniciar sesion' style={styles.boton} onPress={handleLogin}></Button>
             <Button title='Registrarse' style={styles.boton}></Button>
 
         </View>
@@ -78,8 +87,10 @@ const styles = StyleSheet.create({
     },
     avatar:{
         borderColor:'white',
-        width:'25%',
-        height:'25%',
+        width:'180',
+        height:'180',
+        borderRadius:90,
+        resizeMode:'contain'
 
     },
       subtitulos:{
