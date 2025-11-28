@@ -1,19 +1,22 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, ImageBackground} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import PresupuestoController from '../controllers/PresupuestoController';
 
 
-export default function PresupuestoScreen({navigation}) {
+export default function PresupuestoScreen() {
     const [presupuestos, setPresupuestos] = useState([]);
     const controllerRef = useRef(new PresupuestoController());
     const controller = controllerRef.current;
 
+    const navigation = useNavigation();
+
     useEffect(() => {
         const cargar = async () => {
-        await controller.initialize();
-        const data = await controller.obtenerPresupuestos();
-        setPresupuestos(data);
+            await controller.initialize();
+            const data = await controller.obtenerPresupuestos();
+            setPresupuestos(data);
         };
         cargar();
     }, []);
@@ -46,10 +49,10 @@ export default function PresupuestoScreen({navigation}) {
                 ))}
 
         <TouchableOpacity
-          style={styles.botonCrear}
-          onPress={() => navigation.navigate('AgregarPresupuesto')}
-        >
-          <Text style={styles.botonCrearTexto}>+ Crear</Text>
+                style={styles.botonCrear}
+                onPress={() => navigation.navigate('AgregarPresupuestoScreen')}  
+            >
+                <Text style={styles.botonCrearTexto}>+ Crear</Text>
         </TouchableOpacity>
 
 
