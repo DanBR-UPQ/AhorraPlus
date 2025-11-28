@@ -1,9 +1,73 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { StyleSheet, Text, View, Pressable, ImageBackground, FlatList } from 'react-native'
+import { TransaccionController } from '../controllers/TransaccionController'
 
 export default function TransaccionesScreen() {
     const [screen, setScreen] = useState('gastos')
     const [fecha, setFecha] = useState('dia')
+    const [loading, setLoading] = useState(true)
+    const [transacciones, setTransacciones] = useState([])
+
+    const controller =  useRef(new TransaccionController()).current // new TransaccionController()
+    useEffect(() => {
+        controller.initialize()
+    }, [])
+
+
+
+    const cargarTransacciones = useCallback(async() => {
+        try {
+            setLoading(true)
+            const data = await controller.obtenerTransacciones()
+            setTransacciones(data)
+            console.log(`${data.length} transacciones cargados`)
+        } catch (error) {
+            Alert.alert('Error', error.message)
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
+    const transaccionesFiltradas = transacciones.filter(item => {
+        const tipo = item.tipo.toLowerCase()
+        if (screen === 'gastos') {
+            return tipo === 'gasto'
+        } else if (screen === 'ingresos') {
+            return tipo === 'ingreso'
+        }
+        return true
+    })
+
+    useEffect(() => {
+        const init = async() => {
+            await controller.initialize()
+            await cargarTransacciones()
+        }
+        
+        init()
+        controller.addListener(cargarTransacciones)
+        
+        
+        return () => {
+            controller.removeListener(cargarTransacciones)
+        }
+    }, [cargarTransacciones])
+
+
+    const renderTransaccion = ({ item, index}) => (
+
+        <View style={styles.elemContainer}>
+            <View style={styles.elemIzq}>
+                <Text style={styles.categoriaText}>{item.categoria}</Text>
+                <Text style={styles.comentarioText}>{item.descripcion}</Text>
+            </View>
+            <View style={styles.elemDer}>
+                <Text style={styles.montoText}>$ {item.monto}</Text>
+                <Text style={styles.comentarioText}>{item.fecha}</Text>
+            </View>
+        </View>
+    )
+
 
   return (
     <ImageBackground 
@@ -94,9 +158,22 @@ export default function TransaccionesScreen() {
             <View style={styles.transaccionesContainer}>
 
 
-                <Text style={styles.fecha2Texto}>28 de Septiembre de 2025</Text>
+                <FlatList
+                    data={transaccionesFiltradas}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={renderTransaccion}
+                    ListEmptyComponent={
+                        <View style={{alignItems: 'center'}}>
+                            <Text style={styles.montoText}>No hay transacciones</Text>
+                        </View>
+                    }
+                    style={{ width: '100%' }}
+                    contentContainerStyle={transacciones.length === 0 && styles.emptyList}
+                />
 
-                <View style={styles.elemContainer}>
+                {/* <Text style={styles.fecha2Texto}>28 de Septiembre de 2025</Text> */}
+
+                {/* <View style={styles.elemContainer}>
                     <View style={styles.elemIzq}>
                         <Text style={styles.categoriaText}>Hogar</Text>
                         <Text style={styles.comentarioText}>Pago de luz</Text>
@@ -150,7 +227,7 @@ export default function TransaccionesScreen() {
                     <View style={styles.elemDer}>
                         <Text style={styles.montoText}> $280</Text>
                     </View>
-                </View>
+                </View> */}
 
 
                 {/* <Text>{screen}</Text>
@@ -241,7 +318,9 @@ const styles = StyleSheet.create({
     },
     transaccionesContainer: {
         flex: 15,
+        width: '100%',
         alignItems: 'center',
+        marginTop: 10,
         /* backgroundColor: '#c8b5b5ff',   */      
     },
 
@@ -256,14 +335,16 @@ const styles = StyleSheet.create({
 
     elemContainer: {
         width: '90%',
+        /* width: 270, */
         height: 50,
-        backgroundColor: 'rgba(148, 154, 177, 100)',
+        backgroundColor: 'rgba(148, 154, 177, 1)',
         borderRadius: 10,
         marginBottom: 10,
         flexDirection: 'row',
+        alignSelf: 'center',
     },
     elemIzq: {
-        flex: 1,
+        flex: 2,
         justifyContent: 'center',
         marginStart: 10,
         gap: 5,

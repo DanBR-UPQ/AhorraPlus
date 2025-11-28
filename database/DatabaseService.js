@@ -13,7 +13,8 @@ class DatabaseService {
             console.log('Usando LocalStorage para web')
         } else {
             console.log('Usando SQLite para móvil')
-            this.db = await SQLite.openDatabaseAsync('miapp.db')
+            /* this.db = await SQLite.openDatabaseAsync('miapp.db') */
+            this.db = await SQLite.openDatabaseAsync('miapp.db', { useNewConnection: true });
             await this.db.execAsync(`
                 CREATE TABLE IF NOT EXISTS transacciones (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,6 +27,7 @@ class DatabaseService {
             `)
         }
     }
+
 
     // ===========================================================================================================================
     //                                                  FUNCIONES USUARIO
@@ -46,6 +48,10 @@ class DatabaseService {
             return await this.db.getAllAsync('SELECT * FROM transacciones ORDER BY id DESC')
         }
     }
+
+
+
+
 
     async addTransaccion(monto, categoria, fecha, descripcion, tipo) {
         Transaccion.validarMonto(monto)
