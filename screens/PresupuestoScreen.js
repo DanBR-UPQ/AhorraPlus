@@ -1,6 +1,26 @@
-import { StyleSheet, Text, View, ScrollView, ImageBackground } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, ImageBackground} from 'react-native';
 
-export default function PresupuestoScreen() {
+import PresupuestoController from '../controllers/PresupuestoController';
+
+
+export default function PresupuestoScreen({navigation}) {
+    const [presupuestos, setPresupuestos] = useState([]);
+    const controllerRef = useRef(new PresupuestoController());
+    const controller = controllerRef.current;
+
+    useEffect(() => {
+        const cargar = async () => {
+        await controller.initialize();
+        const data = await controller.obtenerPresupuestos();
+        setPresupuestos(data);
+        };
+        cargar();
+    }, []);
+
+
+
+
     return (
     <ImageBackground 
         source={require('../assets/fondoPresupuesto.png')} 
@@ -12,21 +32,28 @@ export default function PresupuestoScreen() {
                 <Text style={styles.titulo2}>Presupuestos</Text>
             </View>
 
-            <View style={styles.meta}>
-                <View style={styles.fondoMeta}>
-                    <Text style={styles.metaTexto}>Noviembre</Text>
-                </View>
 
-                <View style={styles.contenido}>
-                    <Text style={styles.texto}>Pago de sevicios: $1000</Text>
-                    <Text style={styles.texto}>Trasporte: $500</Text>
-                    <Text style={styles.texto}>Comidas: $1500</Text>
+            {presupuestos.map(p => (
+                <View key={p.id} style={styles.meta}>
+                    <View style={styles.fondoMeta}>
+                    <Text style={styles.metaTexto}>{p.nombre}</Text>
+                    </View>
+                    <View style={styles.contenido}>
+                    <Text style={styles.texto}>Monto: ${p.monto}</Text>
+                    <Text style={styles.texto}>Categoría: {p.categoria}</Text>
+                    </View>
                 </View>
-            </View>
+                ))}
 
-            <View style={styles.botonCrear}>
-                <Text style={styles.botonCrearTexto}>+ Crear</Text>
-            </View>
+        <TouchableOpacity
+          style={styles.botonCrear}
+          onPress={() => navigation.navigate('AgregarPresupuesto')}
+        >
+          <Text style={styles.botonCrearTexto}>+ Crear</Text>
+        </TouchableOpacity>
+
+
+
 
         </ScrollView>
     </ImageBackground>

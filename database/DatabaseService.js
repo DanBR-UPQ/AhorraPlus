@@ -1,16 +1,17 @@
 import { Platform } from 'react-native'
 import * as SQLite from 'expo-sqlite'
-import { Transaccion } from '../models/Transaccion'
+import { Transaccion } from '../models/transaccion'
 
 class DatabaseService {
     constructor() {
         this.db = null
         this.storageKey = 'transacciones'
+        this.storageKeyPresupuestos = 'presupuestos';
     }
 
     async initialize() {
         if (Platform.OS === 'web') {
-            console.log('Usando LocalStorage para web')
+            console.log('Usando LocalStorage para web');
         } else {
             console.log('Usando SQLite para móvil')
             this.db = await SQLite.openDatabaseAsync('miapp.db')
@@ -24,6 +25,15 @@ class DatabaseService {
                     tipo TEXT NOT NULL
                 )
             `)
+            await this.db.execAsync(`
+                CREATE TABLE IF NOT EXISTS presupuestos (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    nombre TEXT NOT NULL,
+                    monto REAL NOT NULL,
+                    categoria TEXT
+                )
+            `)
+
         }
     }
 
@@ -156,6 +166,52 @@ class DatabaseService {
     // ===========================================================================================================================
     //                                                  FUNCIONES PRESUPUESTOS
     // ===========================================================================================================================
+
+// ===========================================================================================================================
+//                                                  FUNCIONES PRESUPUESTOS
+// ===========================================================================================================================
+
+async getAllPresupuestos() {
+        if (Platform.OS === 'web') {
+            const data = localStorage.getItem(this.storageKeyPresupuestos)
+            return data ? JSON.parse(data) : []
+        } else {
+            return await this.db.getAllAsync('SELECT * FROM presupuestos ORDER BY id DESC')
+        }
+    }
+
+    // CHANGED: addPresupuesto ahora solo inserta nombre, monto y categoria (sin fechas)
+    async addPresupuesto(nombre, monto, categoria) {
+      if (Platform.OS === 'web') {
+        const existing = JSON.parse(localStorage.getItem(this.storageKeyPresupuestos) || '[]');
+
+        const nueva = {
+          id: Date.now(),
+          nombre,
+          monto,
+          categoria
+        };
+
+        existing.unshift(nueva);
+        localStorage.setItem(this.storageKeyPresupuestos, JSON.stringify(existing));
+        return nueva;
+      } else {
+        const result = await this.db.runAsync(
+          `INSERT INTO presupuestos (nombre, monto, categoria)
+           VALUES (?, ?, ?)`,
+          nombre, monto, categoria
+        );
+
+        return {
+          id: result.lastInsertRowId,
+          nombre,
+          monto,
+          categoria
+        };
+      }
+    }
+
+
 }
 
 export default new DatabaseService()

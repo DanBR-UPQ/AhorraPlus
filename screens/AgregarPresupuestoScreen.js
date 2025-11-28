@@ -1,15 +1,76 @@
-import { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, TextInput, ImageBackground } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, Text, View, ScrollView, TextInput, ImageBackground, TouchableOpacity, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
+import PresupuestoController from '../controllers/PresupuestoController';
 
-export default function AngregarPresupuestoScreen() {
+export default function AgregarPresupuestoScreen() {
 
+    const navigation = useNavigation();
+
+    
     const [nombre, setNombre] = useState('');
     const [monto, setMonto] = useState('');
     const [categoria, setCategoria] = useState('');
 
+    const controllerRef = useRef(new PresupuestoController());
+    const controller = controllerRef.current;
+
+    useEffect(() => {
+        (async () => {
+            try {
+                await controller.initialize();
+            } catch (err) {
+                console.error('Error inicializando controlador de presupuestos:', err);
+            }
+        })();
+    }, []);
+
+    const handleGuardar = async () => {
+        if (!monto || !categoria || !nombre) {
+            Alert.alert("Atención", "Por favor, llena todos los campos.");
+            return;
+        }
+
+        const montoNumerico = parseFloat(monto);
+
+        if (isNaN(montoNumerico) || montoNumerico <= 0) {
+            Alert.alert("Atención", "El monto debe ser un número válido mayor a cero.");
+            return;
+        }
+
+        try {
+            await controller.crearPresupuesto(
+                nombre.trim(),      
+                montoNumerico,
+                categoria.trim()
+            );
+
+            Alert.alert(
+                'Éxito',
+                '¡Presupuesto guardado con éxito!',
+                [
+                    {
+                        text: 'OK',
+                        onPress: () => {
+                            if (navigation.canGoBack && navigation.canGoBack()) {
+                                navigation.goBack();
+                            } else {
+                                navigation.navigate('PresupuestoScreen'); 
+                            }
+                        }
+                    }
+                ]
+            );
+
+        } catch (error) {
+            console.error("Error al guardar presupuesto:", error);
+            Alert.alert('Error', error.message || 'Hubo un error al guardar.');
+        }
+    };
+
     return (
-        <ImageBackground 
+        <ImageBackground
             source={require('../assets/fondoPresupuesto.png')} 
             style={styles.backgroundImage}
         >
@@ -54,12 +115,21 @@ export default function AngregarPresupuestoScreen() {
                         />
                     </View>
 
-                    <View style={styles.botonCrear}>
+                    {/* <View style={styles.botonCrear}>
                         <Text style={styles.botonCrearTexto}>Guardar</Text>
-                    </View>
+                    </View> */}
+
+                    <TouchableOpacity 
+                        style={styles.botonCrear}
+                        onPress={handleGuardar}
+                    >
+                        <Text style={styles.botonCrearTexto}>Guardar</Text>
+                    </TouchableOpacity>
+
                 </View>
             </ScrollView>
         </ImageBackground>
+
     );
 }
 
