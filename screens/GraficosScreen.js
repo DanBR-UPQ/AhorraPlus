@@ -27,9 +27,11 @@ export default function GraficosScreen() {
             </View>
 
 
+            {/* Gráfica de ingresos / egresos por categoría */}
             <View style={styles.grafContainer}>
                 <View style={styles.fechaContainer}>
-                    <Pressable onPress={() => setTiempoSeleccionado('Día')}>
+                    {/* AQUÍ PON UN SELECTOR CON MODAL PARA FILTRAR POR CATEGORÍA */}
+                    {/* <Pressable onPress={() => setTiempoSeleccionado('Día')}>
                         <Text style={[styles.titulo2, tiempoSeleccionado === 'Día' && { textDecorationLine: 'underline' }]}>Día</Text>
                     </Pressable>
                     <Pressable onPress={() => setTiempoSeleccionado('Mes')}>
@@ -37,7 +39,30 @@ export default function GraficosScreen() {
                     </Pressable>
                     <Pressable onPress={() => setTiempoSeleccionado('Año')}>
                         <Text style={[styles.titulo2, tiempoSeleccionado === 'Año' && { textDecorationLine: 'underline' }]}>Año</Text>
+                    </Pressable> */}
+                </View>
+                
+                <Image
+                source={require('../assets/graficaTest.png')}
+                resizeMode= 'contain'
+                style= {styles.graficaImage}
+                /> 
+            </View>
+
+
+            {/* Gráfica de ingresos / egresos por mes */}
+            <View style={styles.grafContainer}>
+                <View style={styles.fechaContainer}>
+                    {/* AQUÍ PON UN SELECTOR CON MODAL PARA FILTRAR POR MES */}
+                    {/* <Pressable onPress={() => setTiempoSeleccionado('Día')}>
+                        <Text style={[styles.titulo2, tiempoSeleccionado === 'Día' && { textDecorationLine: 'underline' }]}>Día</Text>
                     </Pressable>
+                    <Pressable onPress={() => setTiempoSeleccionado('Mes')}>
+                        <Text style={[styles.titulo2, tiempoSeleccionado === 'Mes' && { textDecorationLine: 'underline' }]}>Mes</Text>
+                    </Pressable>
+                    <Pressable onPress={() => setTiempoSeleccionado('Año')}>
+                        <Text style={[styles.titulo2, tiempoSeleccionado === 'Año' && { textDecorationLine: 'underline' }]}>Año</Text>
+                    </Pressable> */}
                 </View>
                 
                 <Image
@@ -51,11 +76,7 @@ export default function GraficosScreen() {
 
 
 
-
-
-
-
-            <Text style={styles.fecha2Texto}>28 de Septiembre de 2025</Text>
+            {/* <Text style={styles.fecha2Texto}>28 de Septiembre de 2025</Text>
 
             <View style={styles.elemContainer}>
                 <View style={styles.elemIzq}>
@@ -110,7 +131,7 @@ export default function GraficosScreen() {
                 <View style={styles.elemDer}>
                     <Text style={styles.montoText}> $280</Text>
                 </View>
-            </View>
+            </View> */}
         </ImageBackground>
     )
 }

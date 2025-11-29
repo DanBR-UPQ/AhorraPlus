@@ -11,12 +11,12 @@ export default function TransaccionesScreen() {
     const [filtroCat, setFiltroCat] = useState("")
     const [filtroFecha, setFiltroFecha] = useState("")
     const [showCalendar, setShowCalendar] = useState(false)
-    const [showCategoryModal, setShowCategoryModal] = useState(false)
-    const [showDetailModal, setShowDetailModal] = useState(false)
+    const [showCategoriaModal, setShowCategoriaModal] = useState(false)
+    const [showDetallesModal, setShowDetallesModal] = useState(false)
     const [selectedTransaccion, setSelectedTransaccion] = useState(null)
     const [editingFields, setEditingFields] = useState({})
-    const [showCategoryModalDetail, setShowCategoryModalDetail] = useState(false)
-    const [showDatePickerDetail, setShowDatePickerDetail] = useState(false)
+    const [showCategoriaModalDetalles, setShowCategoriaModalDetalles] = useState(false)
+    const [showDatePickerDetalles, setShowDatePickerDetalles] = useState(false)
 
     const controller =  useRef(new TransaccionController()).current // new TransaccionController()
     useEffect(() => {
@@ -80,29 +80,24 @@ export default function TransaccionesScreen() {
         </Pressable>
     )
 
-    const categorias = screen === 'gastos' ? 
+    const categorias =
         [
-            { label: "Todos", value: "" },
             { label: "Servicios", value: "Servicios" },
             { label: "Entretenimiento", value: "Entretenimiento" },
             { label: "Despensa", value: "Despensa" },
             { label: "Transporte", value: "Transporte" },
-            { label: "Otros", value: "Otros" },
-        ] : 
-        [
-            { label: "Todos", value: "" },
             { label: "Salario", value: "Salario" },
             { label: "Inversiones", value: "Inversiones" },
             { label: "Regalos", value: "Regalos" },
-            { label: "Otros", value: "Otros" },   
+            { label: "Otros", value: "Otros" },
         ]
 
-    const handleSelectCategory = (value) => {
+    const handleSelectCategoria = (value) => {
         setFiltroCat(value)
-        setShowCategoryModal(false)
+        setShowCategoriaModal(false)
     }
 
-    const getCategoryLabel = () => {
+    const getCategoriaLabel = () => {
         if (filtroCat === "") return "Seleccionar..."
         const found = categorias.find(cat => cat.value === filtroCat)
         return found ? found.label : "Seleccionar..."
@@ -117,14 +112,14 @@ export default function TransaccionesScreen() {
             descripcion: transaccion.descripcion,
             tipo: transaccion.tipo,
         })
-        setShowDetailModal(true)
+        setShowDetallesModal(true)
     }
 
-    const handleCloseDetailModal = () => {
-        setShowDetailModal(false)
+    const handleCloseDetallesModal = () => {
+        setShowDetallesModal(false)
         setSelectedTransaccion(null)
         setEditingFields({})
-        setShowCategoryModalDetail(false)
+        setShowCategoriaModalDetalles(false)
     }
 
     const handleUpdateField = (field, value) => {
@@ -134,51 +129,45 @@ export default function TransaccionesScreen() {
         }))
     }
 
-    const getCategoryLabelDetail = () => {
+    const getCategoriaLabelDetalles = () => {
         const tipoTransaccion = selectedTransaccion?.tipo.toLowerCase() === 'gasto' ? 'gastos' : 'ingresos'
-        const cats = tipoTransaccion === 'gastos' ? 
+        const cats =
             [
                 { label: "Servicios", value: "Servicios" },
                 { label: "Entretenimiento", value: "Entretenimiento" },
                 { label: "Despensa", value: "Despensa" },
                 { label: "Transporte", value: "Transporte" },
-                { label: "Otros", value: "Otros" },
-            ] : 
-            [
                 { label: "Salario", value: "Salario" },
                 { label: "Inversiones", value: "Inversiones" },
                 { label: "Regalos", value: "Regalos" },
-                { label: "Otros", value: "Otros" },   
+                { label: "Otros", value: "Otros" },
             ]
         const found = cats.find(cat => cat.value === editingFields.categoria)
         return found ? found.label : "Seleccionar..."
     }
 
-    const categoriesDetail = selectedTransaccion?.tipo.toLowerCase() === 'gasto' ? 
+    const categoriesDetalles =
         [
             { label: "Servicios", value: "Servicios" },
             { label: "Entretenimiento", value: "Entretenimiento" },
             { label: "Despensa", value: "Despensa" },
             { label: "Transporte", value: "Transporte" },
-            { label: "Otros", value: "Otros" },
-        ] : 
-        [
             { label: "Salario", value: "Salario" },
             { label: "Inversiones", value: "Inversiones" },
             { label: "Regalos", value: "Regalos" },
-            { label: "Otros", value: "Otros" },   
+            { label: "Otros", value: "Otros" },
         ]
 
-    const handleSelectCategoryDetail = (value) => {
+    const handleSelectCategoriaDetalles = (value) => {
         handleUpdateField('categoria', value)
-        setShowCategoryModalDetail(false)
+        setShowCategoriaModalDetalles(false)
     }
 
-    const handleSelectTypeDetail = (value) => {
+    const handleSelectTypeDetalles = (value) => {
         handleUpdateField('tipo', value)
     }
 
-    const handleSaveChanges = async () => {
+    const handleGuardarCambios = async () => {
         try {
             if (!selectedTransaccion) return
 
@@ -192,7 +181,7 @@ export default function TransaccionesScreen() {
 
             await controller.actualizarTransaccion(selectedTransaccion.id, updates)
             Alert.alert('Éxito', 'Transacción actualizada correctamente')
-            handleCloseDetailModal()
+            handleCloseDetallesModal()
         } catch (error) {
             Alert.alert('Error', error.message)
         }
@@ -215,7 +204,7 @@ export default function TransaccionesScreen() {
                             if (!selectedTransaccion) return
                             await controller.eliminarTransaccion(selectedTransaccion.id)
                             Alert.alert('Éxito', 'Transacción eliminada correctamente')
-                            handleCloseDetailModal()
+                            handleCloseDetallesModal()
                         } catch (error) {
                             Alert.alert('Error', error.message)
                         }
@@ -274,9 +263,9 @@ export default function TransaccionesScreen() {
                 {/* PICKER Y EL CALEDNARIO */}
 
                 <Text>Categoría: </Text>
-                <TouchableOpacity onPress={() => setShowCategoryModal(true)} style={styles.fechaSelectContainer}>
+                <TouchableOpacity onPress={() => setShowCategoriaModal(true)} style={styles.fechaSelectContainer}>
                     <TextInput
-                        value={getCategoryLabel()}
+                        value={getCategoriaLabel()}
                         placeholder="Seleccionar..."
                         placeholderTextColor="black"
                         editable={false}       
@@ -287,7 +276,7 @@ export default function TransaccionesScreen() {
                 </TouchableOpacity>
 
                 <Modal
-                    visible={showCategoryModal}
+                    visible={showCategoriaModal}
                     transparent={true}
                     animationType="fade"
                 >
@@ -298,7 +287,7 @@ export default function TransaccionesScreen() {
                                 <TouchableOpacity
                                     key={index}
                                     style={styles.categoryOpcion}
-                                    onPress={() => handleSelectCategory(cat.value)}
+                                    onPress={() => handleSelectCategoria(cat.value)}
                                 >
                                     <Text style={[
                                         styles.categoryOpcionText,
@@ -310,7 +299,7 @@ export default function TransaccionesScreen() {
                             ))}
                             <TouchableOpacity
                                 style={styles.cerrarModalButton}
-                                onPress={() => setShowCategoryModal(false)}
+                                onPress={() => setShowCategoriaModal(false)}
                             >
                                 <Text style={styles.cerrarModalButtonText}>Cancelar</Text>
                             </TouchableOpacity>
@@ -445,10 +434,10 @@ export default function TransaccionesScreen() {
         </View>
 
         <Modal
-            visible={showDetailModal}
+            visible={showDetallesModal}
             transparent={true}
             animationType="fade"
-            onRequestClose={handleCloseDetailModal}
+            onRequestClose={handleCloseDetallesModal}
         >
             <View style={styles.modalOverlay}>
                 <View style={styles.detallesModalContent}>
@@ -473,7 +462,7 @@ export default function TransaccionesScreen() {
                                     styles.tipoButton,
                                     editingFields.tipo === 'Gasto' && styles.tipoButtonSelected
                                 ]}
-                                onPress={() => handleSelectTypeDetail('Gasto')}
+                                onPress={() => handleSelectTypeDetalles('Gasto')}
                             >
                                 <Text style={[
                                     styles.tipoButtonText,
@@ -487,7 +476,7 @@ export default function TransaccionesScreen() {
                                     styles.tipoButton,
                                     editingFields.tipo === 'Ingreso' && styles.tipoButtonSelected
                                 ]}
-                                onPress={() => handleSelectTypeDetail('Ingreso')}
+                                onPress={() => handleSelectTypeDetalles('Ingreso')}
                             >
                                 <Text style={[
                                     styles.tipoButtonText,
@@ -502,11 +491,11 @@ export default function TransaccionesScreen() {
                     <View style={styles.detallesFieldContainer}>
                         <Text style={styles.detallesFieldLabel}>Categoría:</Text>
                         <TouchableOpacity 
-                            onPress={() => setShowCategoryModalDetail(true)} 
+                            onPress={() => setShowCategoriaModalDetalles(true)} 
                             style={styles.fechaSelectContainer}
                         >
                             <TextInput
-                                value={getCategoryLabelDetail()}
+                                value={getCategoriaLabelDetalles()}
                                 placeholder="Seleccionar..."
                                 placeholderTextColor="black"
                                 editable={false}
@@ -518,18 +507,18 @@ export default function TransaccionesScreen() {
                     </View>
 
                     <Modal
-                        visible={showCategoryModalDetail}
+                        visible={showCategoriaModalDetalles}
                         transparent={true}
                         animationType="fade"
                     >
                         <View style={styles.modalOverlay}>
                             <View style={styles.modalContent}>
                                 <Text style={styles.modalTitulo}>Seleccionar Categoría</Text>
-                                {categoriesDetail.map((cat, index) => (
+                                {categoriesDetalles.map((cat, index) => (
                                     <TouchableOpacity
                                         key={index}
                                         style={styles.categoryOpcion}
-                                        onPress={() => handleSelectCategoryDetail(cat.value)}
+                                        onPress={() => handleSelectCategoriaDetalles(cat.value)}
                                     >
                                         <Text style={[
                                             styles.categoryOpcionText,
@@ -541,7 +530,7 @@ export default function TransaccionesScreen() {
                                 ))}
                                 <TouchableOpacity
                                     style={styles.cerrarModalButton}
-                                    onPress={() => setShowCategoryModalDetail(false)}
+                                    onPress={() => setShowCategoriaModalDetalles(false)}
                                 >
                                     <Text style={styles.cerrarModalButtonText}>Cancelar</Text>
                                 </TouchableOpacity>
@@ -552,7 +541,7 @@ export default function TransaccionesScreen() {
                     <View style={styles.detallesFieldContainer}>
                         <Text style={styles.detallesFieldLabel}>Fecha:</Text>
                         <TouchableOpacity 
-                            onPress={() => setShowDatePickerDetail(true)} 
+                            onPress={() => setShowDatePickerDetalles(true)} 
                             style={styles.fechaSelectContainer}
                         >
                             <TextInput
@@ -565,13 +554,13 @@ export default function TransaccionesScreen() {
                         </TouchableOpacity>
                     </View>
 
-                    {showDatePickerDetail && (
+                    {showDatePickerDetalles && (
                         <DateTimePicker
                             value={new Date()}
                             mode="date"
                             display="calendar"
                             onChange={(event, selectedDate) => {
-                                setShowDatePickerDetail(false);
+                                setShowDatePickerDetalles(false);
                                 if (selectedDate) {
                                     const f = selectedDate.toLocaleDateString("es-MX");
                                     handleUpdateField('fecha', f);
@@ -595,7 +584,7 @@ export default function TransaccionesScreen() {
                     <View style={styles.detallesButtonsContainer}>
                         <TouchableOpacity 
                             style={styles.guardarButton}
-                            onPress={handleSaveChanges}
+                            onPress={handleGuardarCambios}
                         >
                             <Text style={styles.guardarButtonText}>Guardar</Text>
                         </TouchableOpacity>
@@ -603,15 +592,15 @@ export default function TransaccionesScreen() {
                             style={styles.deleteButton}
                             onPress={handleDeleteTransaccion}
                         >
-                            <Text style={styles.deleteButtonText}>Eliminar</Text>
+                            <Text style={styles.guardarButtonText}>Eliminar</Text>
                         </TouchableOpacity>
                     </View>
 
                     <TouchableOpacity 
-                        style={styles.cerrarDetailButton}
-                        onPress={handleCloseDetailModal}
+                        style={styles.cerrarDetallesButton}
+                        onPress={handleCloseDetallesModal}
                     >
-                        <Text style={styles.cerrarDetailButtonText}>Cancelar</Text>
+                        <Text style={styles.cerrarDetallesButtonText}>Cancelar</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -861,7 +850,7 @@ const styles = StyleSheet.create({
     guardarButton: {
         flex: 1,
         backgroundColor: 'rgba(110, 139, 201, 1)',
-        borderRadius: 6,
+        borderRadius: 10,
         paddingVertical: 12,
         alignItems: 'center',
     },
@@ -872,23 +861,18 @@ const styles = StyleSheet.create({
     },
     deleteButton: {
         flex: 1,
-        backgroundColor: '#e74c3c',
-        borderRadius: 6,
+        backgroundColor: '#8a261bff',
+        borderRadius: 10,
         paddingVertical: 12,
         alignItems: 'center',
     },
-    deleteButtonText: {
-        fontSize: 14,
-        fontWeight: '700',
-        color: 'white',
-    },
-    cerrarDetailButton: {
+    cerrarDetallesButton: {
         paddingVertical: 12,
         backgroundColor: '#f0f0f0',
         borderRadius: 6,
         alignItems: 'center',
     },
-    cerrarDetailButtonText: {
+    cerrarDetallesButtonText: {
         fontSize: 14,
         fontWeight: '600',
         color: '#666',
@@ -901,7 +885,7 @@ const styles = StyleSheet.create({
         flex: 1,
         borderWidth: 2,
         borderColor: '#ccc',
-        borderRadius: 6,
+        borderRadius: 10,
         paddingVertical: 10,
         alignItems: 'center',
         backgroundColor: '#f4f4f4ff',
