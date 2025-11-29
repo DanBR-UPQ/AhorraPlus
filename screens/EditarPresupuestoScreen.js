@@ -1,18 +1,22 @@
 import { useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, TextInput, ImageBackground, Pressable } from 'react-native';
 
+import { useNavigation } from '@react-navigation/native';
+
 export default function EditarPresupuestoScreen() {
 
     const [nombre, setNombre] = useState('Septiembre');
     const [monto, setMonto] = useState('1500');
     const [categoria, setCategoria] = useState('Entretenimiento');
 
+    const navigation = useNavigation();
+
     const handleAceptar = () => {
         console.log("Cambios guardados:", { nombre, monto, categoria });
     };
 
     const handleCancelar = () => {
-        console.log("Edición cancelada");
+        navigation.navigate('PresupuestoScreen'); 
     };
 
     const handleEliminar = () => {
