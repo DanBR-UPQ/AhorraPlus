@@ -14,6 +14,7 @@ import RegistroIngresosScreen from '../screens/RegistroIngresosScreen';
 import TestScreen from '../screens/TestScreen';
 import TransaccionesScreen from '../screens/TransaccionesScreen';
 import EditarPresupuestoScreen from './EditarPresupuestoScreen';
+import RecuperarContraseña from './RecuperarContraseña';
 
 export default function BarraLateral() {
   const [barraAbierta, setBarraAbierta] = useState(false);
@@ -29,6 +30,7 @@ export default function BarraLateral() {
     'Pagos': <PagosScreen />,
     'Crear pago': <Crearpagos />,
     'Editar pago': <EditarPago />,
+    'Recuperar Contraseña':<RecuperarContraseña/>,
     'Presupuesto': <PresupuestoScreen />,
     'Agregar Presupuesto': <AgregarPresupuestoScreen />,
     'Editar Presupuesto': <EditarPresupuestoScreen/>,

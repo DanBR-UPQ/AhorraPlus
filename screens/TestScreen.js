@@ -11,7 +11,7 @@ import Editarpago from './EditarPago'
 import EditarRegistroScreen from './EditarRegistroScreen'
 
 
-
+import RecuperarContraseña from './RecuperarContraseña'
 import PagosScreen from './PagosScreen'
 
 import Crearpagos from './Crearpagos'
@@ -45,6 +45,8 @@ export default function TestScreen() {
       return<Editarpago/>
       case 'er':
       return <EditarRegistroScreen></EditarRegistroScreen>
+      case 'RecuperarContraseña':
+      return<RecuperarContraseña/>
 
       case 'CrearPago':
       return<Crearpagos/>
@@ -86,6 +88,7 @@ export default function TestScreen() {
             <Button title='RegistroIngresos' onPress={() => setVist('RegIn')}/>
             < Button title= 'PagosScreen' onPress={() => setVist('Pagos')}/>
             < Button title= 'CrearPago' onPress={() => setVist('CrearPago')}/>
+            <Button title= 'RecuperarContraseña' onPress={() => setVist('RecuperarContraseña')}/>
             < Button title= 'Añadir Objetivo' onPress={() => setVist('AgrObj')}/>
             < Button title= 'Gráficas' onPress={() => setVist('graf')}/>
             < Button title= 'editar pago' onPress={() => setVist('ed')}/>
