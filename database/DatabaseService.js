@@ -1,6 +1,6 @@
 import { Platform } from 'react-native'
 import * as SQLite from 'expo-sqlite'
-import { Transaccion } from '../models/transaccion'
+import { Transaccion } from '../models/Transaccion'
 
 class DatabaseService {
     constructor() {

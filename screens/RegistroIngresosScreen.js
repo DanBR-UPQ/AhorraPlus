@@ -19,14 +19,12 @@ export default function RegistroIngresosScreen(){
     "Entretenimiento",
     "Despensa",
     "Transporte",
-    "Otro",
-    ]
-    const categorias2 = [
     "Salario",
     "Inversiones",
     "Regalos",
     "Otro"
     ]
+
 
 
     const controller =  useRef(new TransaccionController()).current // new TransaccionController()
@@ -111,7 +109,7 @@ export default function RegistroIngresosScreen(){
                     <View
                     style={styles.modalElememto}
                     >
-                    {(screen === "Gasto" ? categorias : categorias2).map((cat) => (
+                    {(categorias).map((cat) => (
                         <TouchableOpacity
                         key={cat}
                         onPress={() => {
