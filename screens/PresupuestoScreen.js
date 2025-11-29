@@ -44,18 +44,27 @@ export default function PresupuestoScreen() {
                     <View style={styles.contenido}>
                     <Text style={styles.texto}>Monto: ${p.monto}</Text>
                     <Text style={styles.texto}>Categoría: {p.categoria}</Text>
+
+                    <TouchableOpacity
+                                style={styles.botonEditar} 
+                                onPress={() => {
+
+                                    navigation.navigate('EditarPresupuestoScreen');
+                                }}
+                            >
+                                <Text style={styles.botonEditarTexto}>Editar</Text>
+                            </TouchableOpacity>
+
                     </View>
                 </View>
                 ))}
 
         <TouchableOpacity
-                style={styles.botonCrear}
-                onPress={() => navigation.navigate('AgregarPresupuestoScreen')}  
+            style={styles.botonCrear}
+            onPress={() => navigation.navigate('AgregarPresupuestoScreen')}  
             >
-                <Text style={styles.botonCrearTexto}>+ Crear</Text>
+                <Text style={styles.botonCrearTexto}>+ Crear </Text>
         </TouchableOpacity>
-
-
 
 
         </ScrollView>
@@ -134,5 +143,18 @@ const styles = StyleSheet.create({
         alignSelf: 'end',
         borderRadius: 25,
         paddingVertical: 5,
+    },
+    botonEditar: {
+        marginTop: 10,
+        alignSelf: 'flex-start',
+        backgroundColor: '#ffd97a',
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 12,
+    },
+    botonEditarTexto: {
+        color: 'black',
+        fontSize: 14,
+        fontWeight: '600',
     },
 });
