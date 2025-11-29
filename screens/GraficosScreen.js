@@ -1,20 +1,102 @@
-import { Text, StyleSheet, View, ImageBackground, Image, Pressable } from 'react-native'
-import { useState } from 'react'
+import { Text, StyleSheet, View, ImageBackground, Image, Pressable, Modal, ScrollView, Dimensions } from 'react-native'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { BarChart } from 'react-native-chart-kit'
+import { TransaccionController } from '../controllers/TransaccionController'
 
 export default function GraficosScreen() {
     const [seleccionado, setSeleccionado] = useState('General')
     const [tiempoSeleccionado, setTiempoSeleccionado] = useState('Día')
+    const [transacciones, setTransacciones] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('Todas')
+    const [mesSeleccionado, setMesSeleccionado] = useState('Todos')
+    const [modalCategoria, setModalCategoria] = useState(false)
+    const [modalMes, setModalMes] = useState(false)
+
+    const controller = useRef(new TransaccionController()).current
+
+    useEffect(() => {
+        controller.initialize()
+    }, [])
+
+    const cargarTransacciones = useCallback(async() => {
+        try {
+            setLoading(true)
+            const data = await controller.obtenerTransacciones()
+            setTransacciones(data)
+            console.log(`${data.length} transacciones cargados`)
+        } catch (error) {
+            Alert.alert('Error', error.message)
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
+    useEffect(() => {
+        const init = async() => {
+            await controller.initialize()
+            await cargarTransacciones()
+        }
+        
+        init()
+        controller.addListener(cargarTransacciones)
+        
+        return () => {
+            controller.removeListener(cargarTransacciones)
+        }
+    }, [cargarTransacciones])
+
+    const categorias = ['Todas', ...new Set(transacciones.map(t => t.categoria))]
+    const meses = ['Todos', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+    const parseFecha = (f) => {
+        const [dia, mes, año] = f.split('/').map(Number)
+        return { dia, mes, año }
+    }
+
+    const getDatosCategoria = () => {
+        const filtradas = categoriaSeleccionada === 'Todas' 
+            ? transacciones 
+            : transacciones.filter(t => t.categoria === categoriaSeleccionada)
+        
+        const ingresos = filtradas.filter(t => t.tipo === 'Ingreso').reduce((sum, t) => sum + t.monto, 0)
+        const Gastos = filtradas.filter(t => t.tipo === 'Gasto').reduce((sum, t) => sum + t.monto, 0)
+        
+        return { labels: ['Ingresos', 'Gastos'], datasets: [{ data: [ingresos, Gastos] }] }
+    }
+
+    const getDatosMes = () => {
+        const idx = meses.indexOf(mesSeleccionado)
+        const mesFiltrado = mesSeleccionado === 'Todos' ? null : idx
+
+        const filtradas = mesFiltrado
+            ? transacciones.filter(t => {
+                const { mes } = parseFecha(t.fecha)
+                return mes === mesFiltrado
+            })
+            : transacciones
+
+        const ingresos = filtradas
+            .filter(t => t.tipo === 'Ingreso')
+            .reduce((sum, t) => sum + t.monto, 0)
+
+        const gastos = filtradas
+            .filter(t => t.tipo === 'Gasto')
+            .reduce((sum, t) => sum + t.monto, 0)
+
+        return { labels: ['Ingresos', 'Gastos'], datasets: [{ data: [ingresos, gastos] }] }
+    }
+
 
     return (
         <ImageBackground 
         source={require('../assets/fondoGraficas.png')}
         resizeMode='cover'
         style={styles.container}
+        imageStyle={styles.container}
         >
             <Text style={styles.titulo}>Gráficos</Text>
 
-
-            <View style={styles.fecha2Container}>
+            {/* <View style={styles.fecha2Container}>
                 <Pressable onPress={() => setSeleccionado('General')}>
                     <Text style={[styles.titulo3, seleccionado === 'General' && { textDecorationLine: 'underline' }]}>General</Text>
                 </Pressable>
@@ -24,57 +106,87 @@ export default function GraficosScreen() {
                 <Pressable onPress={() => setSeleccionado('Ingresos')}>
                     <Text style={[styles.titulo3, seleccionado === 'Ingresos' && { textDecorationLine: 'underline' }]}>Ingresos</Text>
                 </Pressable>               
-            </View>
+            </View> */}
 
-
-            {/* Gráfica de ingresos / egresos por categoría */}
+            {/*ingresos / gastos por categoría */}
             <View style={styles.grafContainer}>
                 <View style={styles.fechaContainer}>
-                    {/* AQUÍ PON UN SELECTOR CON MODAL PARA FILTRAR POR CATEGORÍA */}
-                    {/* <Pressable onPress={() => setTiempoSeleccionado('Día')}>
-                        <Text style={[styles.titulo2, tiempoSeleccionado === 'Día' && { textDecorationLine: 'underline' }]}>Día</Text>
+                    <Text style={styles.titulo2}>Por Categoría</Text>
+                    <Pressable onPress={() => setModalCategoria(true)}>
+                        <Text style={styles.titulo2}>{categoriaSeleccionada} ▼</Text>
                     </Pressable>
-                    <Pressable onPress={() => setTiempoSeleccionado('Mes')}>
-                        <Text style={[styles.titulo2, tiempoSeleccionado === 'Mes' && { textDecorationLine: 'underline' }]}>Mes</Text>
-                    </Pressable>
-                    <Pressable onPress={() => setTiempoSeleccionado('Año')}>
-                        <Text style={[styles.titulo2, tiempoSeleccionado === 'Año' && { textDecorationLine: 'underline' }]}>Año</Text>
-                    </Pressable> */}
                 </View>
                 
-                <Image
-                source={require('../assets/graficaTest.png')}
-                resizeMode= 'contain'
-                style= {styles.graficaImage}
-                /> 
+                <BarChart
+                    data={getDatosCategoria()}
+                    width={Dimensions.get('window').width * 0.85}
+                    height={200}
+                    chartConfig={{
+                        backgroundColor: '#949AB1',
+                        backgroundGradientFrom: '#949AB1',
+                        backgroundGradientTo: '#949AB1',
+                        decimalPlaces: 0,
+                        color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                        labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                    }}
+                    fromZero={true}
+                    style={{ borderRadius: 10 }}
+                />
             </View>
 
-
-            {/* Gráfica de ingresos / egresos por mes */}
+            {/*  ingresos / Gastos por mes */}
             <View style={styles.grafContainer}>
                 <View style={styles.fechaContainer}>
-                    {/* AQUÍ PON UN SELECTOR CON MODAL PARA FILTRAR POR MES */}
-                    {/* <Pressable onPress={() => setTiempoSeleccionado('Día')}>
-                        <Text style={[styles.titulo2, tiempoSeleccionado === 'Día' && { textDecorationLine: 'underline' }]}>Día</Text>
+                    <Text style={styles.titulo2}>Por Mes</Text>
+                    <Pressable onPress={() => setModalMes(true)}>
+                        <Text style={styles.titulo2}>{mesSeleccionado} ▼</Text>
                     </Pressable>
-                    <Pressable onPress={() => setTiempoSeleccionado('Mes')}>
-                        <Text style={[styles.titulo2, tiempoSeleccionado === 'Mes' && { textDecorationLine: 'underline' }]}>Mes</Text>
-                    </Pressable>
-                    <Pressable onPress={() => setTiempoSeleccionado('Año')}>
-                        <Text style={[styles.titulo2, tiempoSeleccionado === 'Año' && { textDecorationLine: 'underline' }]}>Año</Text>
-                    </Pressable> */}
                 </View>
                 
-                <Image
-                source={require('../assets/graficaTest.png')}
-                resizeMode= 'contain'
-                style= {styles.graficaImage}
-                /> 
+                <BarChart
+                    data={getDatosMes()}
+                    width={Dimensions.get('window').width * 0.85}
+                    height={200}
+                    chartConfig={{
+                        backgroundColor: '#949AB1',
+                        backgroundGradientFrom: '#949AB1',
+                        backgroundGradientTo: '#949AB1',
+                        decimalPlaces: 0,
+                        color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                        labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                    }}
+                    fromZero={true}
+                    style={{ borderRadius: 10 }}
+                />
             </View>
 
+            <Modal visible={modalCategoria} transparent animationType="fade">
+                <Pressable style={styles.modalOverlay} onPress={() => setModalCategoria(false)}>
+                    <View style={styles.modalContent}>
+                        <ScrollView>
+                            {categorias.map(cat => (
+                                <Pressable key={cat} onPress={() => { setCategoriaSeleccionada(cat); setModalCategoria(false) }} style={styles.modalItem}>
+                                    <Text style={styles.modalText}>{cat}</Text>
+                                </Pressable>
+                            ))}
+                        </ScrollView>
+                    </View>
+                </Pressable>
+            </Modal>
 
-
-
+            <Modal visible={modalMes} transparent animationType="fade">
+                <Pressable style={styles.modalOverlay} onPress={() => setModalMes(false)}>
+                    <View style={styles.modalContent}>
+                        <ScrollView>
+                            {meses.map(mes => (
+                                <Pressable key={mes} onPress={() => { setMesSeleccionado(mes); setModalMes(false) }} style={styles.modalItem}>
+                                    <Text style={styles.modalText}>{mes}</Text>
+                                </Pressable>
+                            ))}
+                        </ScrollView>
+                    </View>
+                </Pressable>
+            </Modal>
 
             {/* <Text style={styles.fecha2Texto}>28 de Septiembre de 2025</Text>
 
@@ -141,7 +253,9 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(55, 76, 146, 1)',
+        gap: 15,
+        /* backgroundColor: 'rgba(55, 76, 146, 1)', */
+        /* backgroundColor: 'red' */
     },
 
     titulo: {
@@ -185,9 +299,14 @@ const styles = StyleSheet.create({
     fechaContainer: {
         alignItems: 'center',
         gap: 50,
+        width: '90%',
         flexDirection: 'row',
-        marginTop: 5,
-        marginBottom: 5,
+        justifyContent: 'center',
+        marginTop: 2,
+        marginBottom: 15,
+        paddingBottom: 5,
+        borderBottomWidth: 1,
+        borderBottomColor: 'white',
         /* backgroundColor: 'blue', */
     },
     graficaImage: {
@@ -195,8 +314,28 @@ const styles = StyleSheet.create({
         width: '100%', 
     },
 
-
-
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 20,
+        width: '70%',
+        maxHeight: '50%',
+    },
+    modalItem: {
+        padding: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ddd',
+    },
+    modalText: {
+        fontSize: 16,
+        color: '#444',
+    },
 
     fecha2Texto: {
         color: 'rgba(159, 147, 147, 1)',

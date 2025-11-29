@@ -97,7 +97,7 @@ export default function RegistroIngresosScreen(){
                 style={styles.inputContainer}
                 onPress={() => setDropdownVisible(true)}
                 >
-                <Text style={styles.textCategoria}>▽  {categoria}</Text>
+                <Text style={styles.textCategoria}>▼  {categoria}</Text>
                 </TouchableOpacity>
 
 

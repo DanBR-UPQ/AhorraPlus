@@ -92,6 +92,10 @@ export default function TransaccionesScreen() {
             { label: "Otros", value: "Otros" },
         ]
 
+
+        /* TODOS LOS HANDLES */
+
+        
     const handleSelectCategoria = (value) => {
         setFiltroCat(value)
         setShowCategoriaModal(false)
@@ -215,6 +219,11 @@ export default function TransaccionesScreen() {
         )
     }
 
+
+
+
+
+
   return (
     <ImageBackground 
     source={require('../assets/fondoTransacciones.png')}
@@ -256,7 +265,14 @@ export default function TransaccionesScreen() {
             </View>
         </View>
 
+
+            {/* ZONA MAIN */}
+
+
         <View style={styles.mainContainer}>
+
+                {/* ZONA FILTROS */}
+
             <View style={styles.filtrosContainer}>
                 {/* <Text style={styles.montoText}>FILTROS</Text> */}
 
@@ -351,6 +367,8 @@ export default function TransaccionesScreen() {
 
 
 
+                {/* ZONA TRANSACCIONES */}
+
 
             <View style={styles.transaccionesContainer}>
 
@@ -366,72 +384,14 @@ export default function TransaccionesScreen() {
                     }
                     style={{ width: '100%' }}
                     contentContainerStyle={transacciones.length === 0 && styles.emptyList}
-                />
-
-                {/* <Text style={styles.fecha2Texto}>28 de Septiembre de 2025</Text> */}
-
-                {/* <View style={styles.elemContainer}>
-                    <View style={styles.elemIzq}>
-                        <Text style={styles.categoriaText}>Hogar</Text>
-                        <Text style={styles.comentarioText}>Pago de luz</Text>
-                    </View>
-                    <View style={styles.elemDer}>
-                        <Text style={styles.montoText}> $500</Text>
-                        <Text style={styles.comentarioText}>14 Feb 2025</Text>
-                    </View>
-                </View>
-
-
-                <Text style={styles.fecha2Texto}>23 de Septiembre de 2025</Text>
-
-                <View style={styles.elemContainer}>
-                    <View style={styles.elemIzq}>
-                        <Text style={styles.categoriaText}>Hogar</Text>
-                        <Text style={styles.comentarioText}>Pago de internet</Text>
-                    </View>
-                    <View style={styles.elemDer}>
-                        <Text style={styles.montoText}> $420</Text>
-                    </View>
-                </View>
-
-                <View style={styles.elemContainer}>
-                    <View style={styles.elemIzq}>
-                        <Text style={styles.categoriaText}>Comida</Text>
-                        <Text style={styles.comentarioText}>Supermercado</Text>
-                    </View>
-                    <View style={styles.elemDer}>
-                        <Text style={styles.montoText}> $1,200</Text>
-                    </View>
-                </View>
-
-                <View style={styles.elemContainer}>
-                    <View style={styles.elemIzq}>
-                        <Text style={styles.categoriaText}>Transporte</Text>
-                        <Text style={styles.comentarioText}>Gasolina</Text>
-                    </View>
-                    <View style={styles.elemDer}>
-                        <Text style={styles.montoText}> $350</Text>
-                    </View>
-                </View>
-
-                <Text style={styles.fecha2Texto}>7 de Agosto de 2025</Text>
-
-                <View style={styles.elemContainer}>
-                    <View style={styles.elemIzq}>
-                        <Text style={styles.categoriaText}>Entretenimiento</Text>
-                        <Text style={styles.comentarioText}>Cine</Text>
-                    </View>
-                    <View style={styles.elemDer}>
-                        <Text style={styles.montoText}> $280</Text>
-                    </View>
-                </View> */}
-
-
-                {/* <Text>{screen}</Text>
-                <Text>{fecha}</Text>  */}               
+                />           
 
             </View>
         </View>
+
+
+                    {/* ZONA MODAL DETALLES / EDITAR / ELIMINAR */}
+
 
         <Modal
             visible={showDetallesModal}
@@ -487,6 +447,7 @@ export default function TransaccionesScreen() {
                             </TouchableOpacity>
                         </View>
                     </View>
+                    
 
                     <View style={styles.detallesFieldContainer}>
                         <Text style={styles.detallesFieldLabel}>Categoría:</Text>
@@ -537,6 +498,7 @@ export default function TransaccionesScreen() {
                             </View>
                         </View>
                     </Modal>
+
 
                     <View style={styles.detallesFieldContainer}>
                         <Text style={styles.detallesFieldLabel}>Fecha:</Text>
