@@ -1,19 +1,22 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, ImageBackground} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import PresupuestoController from '../controllers/PresupuestoController';
 
 
-export default function PresupuestoScreen({navigation}) {
+export default function PresupuestoScreen() {
     const [presupuestos, setPresupuestos] = useState([]);
     const controllerRef = useRef(new PresupuestoController());
     const controller = controllerRef.current;
 
+    const navigation = useNavigation();
+
     useEffect(() => {
         const cargar = async () => {
-        await controller.initialize();
-        const data = await controller.obtenerPresupuestos();
-        setPresupuestos(data);
+            await controller.initialize();
+            const data = await controller.obtenerPresupuestos();
+            setPresupuestos(data);
         };
         cargar();
     }, []);
@@ -41,18 +44,27 @@ export default function PresupuestoScreen({navigation}) {
                     <View style={styles.contenido}>
                     <Text style={styles.texto}>Monto: ${p.monto}</Text>
                     <Text style={styles.texto}>Categoría: {p.categoria}</Text>
+
+                    <TouchableOpacity
+                                style={styles.botonEditar} 
+                                onPress={() => {
+
+                                    navigation.navigate('EditarPresupuestoScreen');
+                                }}
+                            >
+                                <Text style={styles.botonEditarTexto}>Editar</Text>
+                            </TouchableOpacity>
+
                     </View>
                 </View>
                 ))}
 
         <TouchableOpacity
-          style={styles.botonCrear}
-          onPress={() => navigation.navigate('AgregarPresupuesto')}
-        >
-          <Text style={styles.botonCrearTexto}>+ Crear</Text>
+            style={styles.botonCrear}
+            onPress={() => navigation.navigate('AgregarPresupuestoScreen')}  
+            >
+                <Text style={styles.botonCrearTexto}>+ Crear </Text>
         </TouchableOpacity>
-
-
 
 
         </ScrollView>
@@ -131,5 +143,18 @@ const styles = StyleSheet.create({
         alignSelf: 'end',
         borderRadius: 25,
         paddingVertical: 5,
+    },
+    botonEditar: {
+        marginTop: 10,
+        alignSelf: 'flex-start',
+        backgroundColor: '#ffd97a',
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 12,
+    },
+    botonEditarTexto: {
+        color: 'black',
+        fontSize: 14,
+        fontWeight: '600',
     },
 });
