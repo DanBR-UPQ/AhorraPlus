@@ -1,18 +1,53 @@
-import { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, TextInput, ImageBackground, Pressable } from 'react-native';
+import { useState, useRef } from 'react';
+import { StyleSheet, Text, View, ScrollView, TextInput, ImageBackground, Pressable, Alert } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+
+import PresupuestoController from '../controllers/PresupuestoController';
 
 export default function EditarPresupuestoScreen() {
 
-    const [nombre, setNombre] = useState('Septiembre');
-    const [monto, setMonto] = useState('1500');
-    const [categoria, setCategoria] = useState('Entretenimiento');
+    const route = useRoute();
+    const { presupuesto } = route.params || {};
+
+    const [nombre, setNombre] = useState(presupuesto?.nombre || '');
+    const [monto, setMonto] = useState(String(presupuesto?.monto) || '');
+    const [categoria, setCategoria] = useState(presupuesto?.categoria || '');
+
+    const controllerRef = useRef(new PresupuestoController());
+    const controller = controllerRef.current;
 
     const navigation = useNavigation();
 
-    const handleAceptar = () => {
-        console.log("Cambios guardados:", { nombre, monto, categoria });
+    const handleAceptar = async () => {
+        if (!monto || !categoria || !nombre) {
+            Alert.alert("Atención", "Por favor, llena todos los campos.");
+            return;
+        }
+
+        const montoNumerico = parseFloat(monto);
+        if (isNaN(montoNumerico) || montoNumerico <= 0) {
+            Alert.alert("Atención", "El monto debe ser un número válido mayor a cero.");
+            return;
+        }
+
+        try {
+            await controller.actualizarPresupuesto(
+                presupuesto.id, 
+                nombre.trim(),
+                montoNumerico,
+                categoria.trim()
+            );
+
+            Alert.alert('Éxito', 'Presupuesto actualizado correctamente.', [{
+                text: 'OK',
+                onPress: () => navigation.navigate('PresupuestoScreen')
+            }]);
+
+        } catch (error) {
+            console.error("Error al actualizar presupuesto:", error);
+            Alert.alert('Error', error.message || 'Hubo un error al actualizar el presupuesto.');
+        }
     };
 
     const handleCancelar = () => {
@@ -20,7 +55,33 @@ export default function EditarPresupuestoScreen() {
     };
 
     const handleEliminar = () => {
-        console.log("Presupuesto eliminado");
+        Alert.alert(
+            'Confirmar Eliminación',
+            `¿Estás seguro de que deseas eliminar el presupuesto '${presupuesto.nombre}'? Esta acción es irreversible.`,
+            [
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Eliminar',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            await controller.eliminarPresupuesto(presupuesto.id);
+                            
+                            Alert.alert('Éxito', 'Presupuesto eliminado correctamente.', [{
+                                text: 'OK',
+                                onPress: () => navigation.navigate('PresupuestoScreen')
+                            }]);
+                        } catch (error) {
+                            console.error("Error al eliminar presupuesto:", error);
+                            Alert.alert('Error', error.message || 'Hubo un error al eliminar el presupuesto.');
+                        }
+                    }
+                },
+            ]
+        );
     };
 
     return (

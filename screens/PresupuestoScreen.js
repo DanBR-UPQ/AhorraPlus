@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, ImageBackground} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 import PresupuestoController from '../controllers/PresupuestoController';
 
@@ -12,13 +12,23 @@ export default function PresupuestoScreen() {
 
     const navigation = useNavigation();
 
+    const recargarPresupuestos = async () => {
+        const data = await controller.obtenerPresupuestos();
+        setPresupuestos(data);
+    };
+
     useEffect(() => {
-        const cargar = async () => {
+        const setup = async () => {
             await controller.initialize();
-            const data = await controller.obtenerPresupuestos();
-            setPresupuestos(data);
+            controller.addListener(recargarPresupuestos);
+            recargarPresupuestos(); 
         };
-        cargar();
+
+        setup();
+
+        return () => {
+            controller.removeListener(recargarPresupuestos);
+        };
     }, []);
 
 
@@ -48,8 +58,7 @@ export default function PresupuestoScreen() {
                     <TouchableOpacity
                                 style={styles.botonEditar} 
                                 onPress={() => {
-
-                                    navigation.navigate('EditarPresupuestoScreen');
+                                    navigation.navigate('EditarPresupuestoScreen', { presupuesto: p });
                                 }}
                             >
                                 <Text style={styles.botonEditarTexto}>Editar</Text>

@@ -1,4 +1,4 @@
-import { Transaccion } from '../models/Transaccion'
+import { Transaccion } from '../models/transaccion'
 import DatabaseService from '../database/DatabaseService'
 
 export class TransaccionController {

@@ -1,6 +1,6 @@
 import { Platform } from 'react-native'
 import * as SQLite from 'expo-sqlite'
-import { Transaccion } from '../models/Transaccion'
+import { Transaccion } from '../models/transaccion'
 
 class DatabaseService {
     constructor() {
@@ -188,37 +188,76 @@ async getAllPresupuestos() {
         }
     }
 
-    // CHANGED: addPresupuesto ahora solo inserta nombre, monto y categoria (sin fechas)
+
     async addPresupuesto(nombre, monto, categoria) {
-      if (Platform.OS === 'web') {
-        const existing = JSON.parse(localStorage.getItem(this.storageKeyPresupuestos) || '[]');
+        if (Platform.OS === 'web') {
+            const existing = JSON.parse(localStorage.getItem(this.storageKeyPresupuestos) || '[]');
 
-        const nueva = {
-          id: Date.now(),
-          nombre,
-          monto,
-          categoria
-        };
+            const nueva = {
+            id: Date.now(),
+            nombre,
+            monto,
+            categoria
+            };
 
-        existing.unshift(nueva);
-        localStorage.setItem(this.storageKeyPresupuestos, JSON.stringify(existing));
-        return nueva;
-      } else {
-        const result = await this.db.runAsync(
-          `INSERT INTO presupuestos (nombre, monto, categoria)
-           VALUES (?, ?, ?)`,
-          nombre, monto, categoria
-        );
+            existing.unshift(nueva);
+            localStorage.setItem(this.storageKeyPresupuestos, JSON.stringify(existing));
+            return nueva;
+        } else {
+            const result = await this.db.runAsync(
+            `INSERT INTO presupuestos (nombre, monto, categoria)
+            VALUES (?, ?, ?)`,
+            nombre, monto, categoria
+            );
 
-        return {
-          id: result.lastInsertRowId,
-          nombre,
-          monto,
-          categoria
-        };
-      }
+            return {
+            id: result.lastInsertRowId,
+            nombre,
+            monto,
+            categoria
+            };
+        }
     }
 
+    async updatePresupuesto(id, nombre, monto, categoria) {
+        if (Platform.OS === 'web') {
+            const existing = JSON.parse(localStorage.getItem(this.storageKeyPresupuestos) || '[]');
+            const index = existing.findIndex(p => p.id === id);
+
+            if (index === -1) throw new Error('Presupuesto no encontrado para actualizar.');
+
+            const updated = {
+                ...existing[index],
+                nombre,
+                monto,
+                categoria,
+            };
+
+            existing[index] = updated;
+            localStorage.setItem(this.storageKeyPresupuestos, JSON.stringify(existing));
+            return updated;
+
+        } else {
+            await this.db.runAsync(
+                `UPDATE presupuestos SET nombre = ?, monto = ?, categoria = ? WHERE id = ?`,
+                nombre, monto, categoria, id
+            );
+            
+            return { id, nombre, monto, categoria };
+        }
+    }
+
+    async deletePresupuesto(id) {
+        if (Platform.OS === 'web') {
+            const existing = JSON.parse(localStorage.getItem(this.storageKeyPresupuestos) || '[]');
+            const nuevas = existing.filter(p => p.id !== id);
+            localStorage.setItem(this.storageKeyPresupuestos, JSON.stringify(nuevas));
+            return true;
+        } else {
+            await this.db.runAsync('DELETE FROM presupuestos WHERE id = ?', id);
+            return true;
+        }
+    }
 
 }
 

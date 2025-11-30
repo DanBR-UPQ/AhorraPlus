@@ -34,6 +34,45 @@ export class PresupuestoController {
     }
   }
 
+
+  async actualizarPresupuesto(id, nombre, monto, categoria) {
+    try {
+      Presupuesto.validarPresupuesto({ nombre, monto, categoria }); 
+
+      const actualizado = await DatabaseService.updatePresupuesto(
+        id,
+        nombre,
+        Number(monto),
+        categoria
+      );
+
+      this.notifyListeners(); 
+
+      return new Presupuesto(
+        actualizado.id,
+        actualizado.nombre,
+        actualizado.monto,
+        actualizado.categoria
+      );
+    } catch (error) {
+      console.error('Error al actualizar presupuesto: ', error);
+      throw error;
+    }
+  }
+
+  async eliminarPresupuesto(id) {
+    try {
+      await DatabaseService.deletePresupuesto(id);
+      this.notifyListeners(); 
+      return true;
+    } catch (error) {
+      console.error('Error al eliminar presupuesto: ', error);
+      throw error;
+    }
+  }
+
+
+
   addListener(callback) {
     this.listeners.push(callback);
   }
