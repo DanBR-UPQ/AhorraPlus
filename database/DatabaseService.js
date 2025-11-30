@@ -32,7 +32,8 @@ class DatabaseService {
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     nombre TEXT NOT NULL,
                     monto REAL NOT NULL,
-                    categoria TEXT
+                    categoria TEXT, 
+                    anio INTEGER
                 )
             `)
 
@@ -198,7 +199,7 @@ class DatabaseService {
     }
   }
 
-    async addPresupuesto(nombre, monto, categoria) {
+    async addPresupuesto(nombre, monto, categoria, anio) {
       if (Platform.OS === 'web') {
         const existing = JSON.parse(localStorage.getItem(this.storageKeyPresupuestos) || '[]');
 
@@ -206,7 +207,8 @@ class DatabaseService {
           id: Date.now(),
           nombre,
           monto,
-          categoria
+          categoria,
+          anio
         };
 
         existing.unshift(nueva);
@@ -214,20 +216,21 @@ class DatabaseService {
         return nueva;
       } else {
         const result = await this.db.runAsync(
-          `INSERT INTO presupuestos (nombre, monto, categoria)
-            VALUES (?, ?, ?)`,
-          nombre, monto, categoria
+          `INSERT INTO presupuestos (nombre, monto, categoria, anio)
+            VALUES (?, ?, ?, ?)`,
+          nombre, monto, categoria, anio
         );
 
         return {
           id: result.lastInsertRowId,
           nombre,
           monto,
-          categoria
+          categoria,
+          anio
         };
       }
     }
-        async updatePresupuesto(id, nombre, monto, categoria) {
+        async updatePresupuesto(id, nombre, monto, categoria, anio) {
         if (Platform.OS === 'web') {
             const existing = JSON.parse(localStorage.getItem(this.storageKeyPresupuestos) || '[]');
             const index = existing.findIndex(p => p.id === id);
@@ -239,6 +242,7 @@ class DatabaseService {
                 nombre,
                 monto,
                 categoria,
+                anio
             };
 
             existing[index] = updated;
@@ -247,11 +251,11 @@ class DatabaseService {
 
         } else {
             await this.db.runAsync(
-                `UPDATE presupuestos SET nombre = ?, monto = ?, categoria = ? WHERE id = ?`,
-                nombre, monto, categoria, id
+                `UPDATE presupuestos SET nombre = ?, monto = ?, categoria = ?, anio = ? WHERE id = ?`,
+                nombre, monto, categoria, anio, id
             );
             
-            return { id, nombre, monto, categoria };
+            return { id, nombre, monto, categoria, anio };
         }
     }
 

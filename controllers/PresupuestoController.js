@@ -10,14 +10,15 @@ export class PresupuestoController {
     await DatabaseService.initialize();
   }
 
-  async crearPresupuesto(nombre, monto, categoria) {
+  async crearPresupuesto(nombre, monto, categoria, anio) {
     try {
-      Presupuesto.validarPresupuesto({ nombre, monto, categoria });
+      Presupuesto.validarPresupuesto({ nombre, monto, categoria, anio });
 
       const nuevo = await DatabaseService.addPresupuesto(
         nombre,
         Number(monto),
-        categoria
+        categoria,
+        Number(anio)
       );
 
       this.notifyListeners();
@@ -26,7 +27,8 @@ export class PresupuestoController {
         nuevo.id,
         nuevo.nombre,
         nuevo.monto,
-        nuevo.categoria
+        nuevo.categoria,
+        nuevo.anio
       );
     } catch (error) {
       console.error('Error al crear presupuesto: ', error);
@@ -35,15 +37,16 @@ export class PresupuestoController {
   }
 
 
-  async actualizarPresupuesto(id, nombre, monto, categoria) {
+  async actualizarPresupuesto(id, nombre, monto, categoria, anio) {
     try {
-      Presupuesto.validarPresupuesto({ nombre, monto, categoria }); 
+      Presupuesto.validarPresupuesto({ nombre, monto, categoria, anio }); 
 
       const actualizado = await DatabaseService.updatePresupuesto(
         id,
         nombre,
         Number(monto),
-        categoria
+        categoria,
+        Number(anio)
       );
 
       this.notifyListeners(); 
@@ -52,7 +55,8 @@ export class PresupuestoController {
         actualizado.id,
         actualizado.nombre,
         actualizado.monto,
-        actualizado.categoria
+        actualizado.categoria,
+        actualizado.anio
       );
     } catch (error) {
       console.error('Error al actualizar presupuesto: ', error);
@@ -93,7 +97,8 @@ export class PresupuestoController {
         dbItem.id,
         dbItem.nombre,
         dbItem.monto,
-        dbItem.categoria
+        dbItem.categoria,
+        dbItem.anio
       ));
     } catch (error) {
       console.error('Error al obtener presupuestos:', error);

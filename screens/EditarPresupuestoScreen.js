@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { StyleSheet, Text, View, ScrollView, TextInput, ImageBackground, Pressable, Alert } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TextInput, ImageBackground, Pressable, Alert, Modal, TouchableOpacity } from 'react-native';
 
 import { useNavigation, useRoute } from '@react-navigation/native';
 
@@ -10,9 +10,39 @@ export default function EditarPresupuestoScreen() {
     const route = useRoute();
     const { presupuesto } = route.params || {};
 
-    const [nombre, setNombre] = useState(presupuesto?.nombre || '');
+    const [mesSeleccionado, setMesSeleccionado] = useState(presupuesto?.nombre || '');
     const [monto, setMonto] = useState(String(presupuesto?.monto) || '');
     const [categoria, setCategoria] = useState(presupuesto?.categoria || '');
+    const [anio, setAnio] = useState(String(presupuesto?.anio || new Date().getFullYear()));
+
+    const [dropdownVisible, setDropdownVisible] = useState(false);
+    const [mesDropdownVisible, setMesDropdownVisible] = useState(false);
+
+    const categorias = [
+        "Servicios",
+        "Entretenimiento",
+        "Despensa",
+        "Transporte",
+        "Salario",
+        "Inversiones",
+        "Regalos",
+        "Otro"
+    ];
+
+    const meses = [
+        "Enero", 
+        "Febrero", 
+        "Marzo", 
+        "Abril", 
+        "Mayo", 
+        "Junio",
+        "Julio", 
+        "Agosto", 
+        "Septiembre", 
+        "Octubre", 
+        "Noviembre",
+        "Diciembre"
+    ];
 
     const controllerRef = useRef(new PresupuestoController());
     const controller = controllerRef.current;
@@ -20,23 +50,31 @@ export default function EditarPresupuestoScreen() {
     const navigation = useNavigation();
 
     const handleAceptar = async () => {
-        if (!monto || !categoria || !nombre) {
-            Alert.alert("Atención", "Por favor, llena todos los campos.");
+        if (!monto || categoria.trim() === '' || !mesSeleccionado || !anio) {
+            Alert.alert("Atención", "Por favor, llena todos los campos, incluyendo la categoría y el año.");
             return;
         }
 
         const montoNumerico = parseFloat(monto);
+        const anioNumerico = parseInt(anio, 10);
+
         if (isNaN(montoNumerico) || montoNumerico <= 0) {
             Alert.alert("Atención", "El monto debe ser un número válido mayor a cero.");
+            return;
+        }
+
+        if (isNaN(anioNumerico) || anioNumerico < 2000 || anioNumerico > 2100) { 
+            Alert.alert("Atención", "El año debe ser un valor válido (ej. 2024).");
             return;
         }
 
         try {
             await controller.actualizarPresupuesto(
                 presupuesto.id, 
-                nombre.trim(),
+                mesSeleccionado.trim(),
                 montoNumerico,
-                categoria.trim()
+                categoria.trim(),
+                anioNumerico
             );
 
             Alert.alert('Éxito', 'Presupuesto actualizado correctamente.', [{
@@ -57,7 +95,7 @@ export default function EditarPresupuestoScreen() {
     const handleEliminar = () => {
         Alert.alert(
             'Confirmar Eliminación',
-            `¿Estás seguro de que deseas eliminar el presupuesto '${presupuesto.nombre}'? Esta acción es irreversible.`,
+            `¿Estás seguro de que deseas eliminar el presupuesto '${mesSeleccionado} ${anio}'? Esta acción es irreversible.`,
             [
                 {
                     text: 'Cancelar',
@@ -102,11 +140,22 @@ export default function EditarPresupuestoScreen() {
 
                     <View style={styles.contenido}>
                         <Text style={styles.label}>Mes del presupuesto</Text>
+                        <TouchableOpacity
+                            style={styles.input}
+                            onPress={() => setMesDropdownVisible(true)} 
+                        >
+                            <Text style={{ color: mesSeleccionado ? 'white' : '#ddd' }}>
+                                {mesSeleccionado || "Selecciona un mes..."}
+                            </Text>
+                        </TouchableOpacity>
+                        <Text style={styles.label}>Año del presupuesto</Text>
                         <TextInput
                             style={styles.input}
-                            value={nombre}
-                            onChangeText={setNombre}
-                            placeholder="Ej. Septiembre"
+                            value={anio}
+                            onChangeText={setAnio}
+                            placeholder="Ej. 2024"
+                            keyboardType="numeric"
+                            maxLength={4}
                             placeholderTextColor="#ddd"
                         />
 
@@ -121,13 +170,65 @@ export default function EditarPresupuestoScreen() {
                         />
 
                         <Text style={styles.label}>Categoría</Text>
-                        <TextInput
+                        <TouchableOpacity
                             style={styles.input}
-                            value={categoria}
-                            onChangeText={setCategoria}
-                            placeholder="Ej. Servicios, Entretenimiento..."
-                            placeholderTextColor="#ddd"
-                        />
+                            onPress={() => setDropdownVisible(true)}
+                        >
+                            <Text style={{ color: categoria ? '#000' : '#ddd' }}>
+                                {categoria || "Selecciona una categoría..."}
+                            </Text>
+                        </TouchableOpacity>
+
+                        <Modal visible={mesDropdownVisible} transparent animationType="fade">
+                            <TouchableOpacity
+                                style={styles.modalContainer}
+                                onPress={() => setMesDropdownVisible(false)}
+                            >
+                                <View style={styles.modalElemento}>
+                                    <Text style={styles.modalTitulo}>Selecciona Mes</Text>
+                                    <ScrollView>
+                                        {meses.map((mes) => (
+                                            <TouchableOpacity
+                                                key={mes}
+                                                onPress={() => {
+                                                    setMesSeleccionado(mes);
+                                                    setMesDropdownVisible(false);
+                                                }}
+                                                style={styles.modalElemento2}
+                                            >
+                                                <Text style={styles.modalTexto}>{mes}</Text>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </ScrollView>
+                                </View>
+                            </TouchableOpacity>
+                        </Modal>
+
+                        
+                        <Modal visible={dropdownVisible} transparent animationType="fade">
+                            <TouchableOpacity
+                                style={styles.modalContainer}
+                                onPress={() => setDropdownVisible(false)}
+                            >
+                                <View style={styles.modalElemento}>
+                                    <Text style={styles.modalTitulo}>Selecciona Categoría</Text>
+                                    <ScrollView>
+                                        {categorias.map((cat) => (
+                                            <TouchableOpacity
+                                                key={cat}
+                                                onPress={() => {
+                                                    setCategoria(cat);
+                                                    setDropdownVisible(false);
+                                                }}
+                                                style={styles.modalElemento2}
+                                            >
+                                                <Text style={styles.modalTexto}>{cat}</Text>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </ScrollView>
+                                </View>
+                            </TouchableOpacity>
+                        </Modal>
                     </View>
 
                     <View style={styles.botonesContainer}>
@@ -242,4 +343,43 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         fontSize: 14,
     },
+    modalContainer: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.5)",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    modalElemento: {
+        width: "80%",
+        backgroundColor: "#fff",
+        borderRadius: 15,
+        padding: 15,
+        maxHeight: '60%', 
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modalElemento2: {
+        padding: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: "#eee"
+    },
+    modalTitulo: {
+        fontSize: 18,
+        fontWeight: '700',
+        textAlign: 'center',
+        paddingBottom: 10,
+        marginBottom: 5,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc'
+    },
+    modalTexto: {
+        fontSize: 16,
+        color: '#333'
+    }
 });

@@ -4,7 +4,17 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 import PresupuestoController from '../controllers/PresupuestoController';
 
+const getMesNombre = (mesNum) => {
+    const meses = [
+        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    return meses[mesNum - 1] || 'Mes Desconocido';
+};
 
+const getMesNombrePresupuesto = (nombreMes) => {
+    return nombreMes;
+}
 export default function PresupuestoScreen() {
     const [presupuestos, setPresupuestos] = useState([]);
     const controllerRef = useRef(new PresupuestoController());
@@ -51,6 +61,9 @@ export default function PresupuestoScreen() {
                     <View style={styles.fondoMeta}>
                     <Text style={styles.metaTexto}>{p.nombre}</Text>
                     </View>
+                    <Text style={styles.texto}>
+                        Período: {getMesNombre(p.nombre)} de {p.anio} 
+                    </Text>
                     <View style={styles.contenido}>
                     <Text style={styles.texto}>Monto: ${p.monto}</Text>
                     <Text style={styles.texto}>Categoría: {p.categoria}</Text>
