@@ -16,7 +16,7 @@ import TransaccionesScreen from '../screens/TransaccionesScreen';
 import EditarPresupuestoScreen from './EditarPresupuestoScreen';
 import RecuperarContraseña from './RecuperarContraseña';
 
-export default function BarraLateral() {
+export default function BarraLateral({navigation}) {
   const [barraAbierta, setBarraAbierta] = useState(false);
   const [screen, setScreen] = useState('Inicio');
 

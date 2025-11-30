@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { BarChart } from 'react-native-chart-kit'
 import { TransaccionController } from '../controllers/TransaccionController'
 
-export default function GraficosScreen() {
+export default function GraficosScreen({navigation}) {
     const [seleccionado, setSeleccionado] = useState('General')
     const [tiempoSeleccionado, setTiempoSeleccionado] = useState('Día')
     const [transacciones, setTransacciones] = useState([])

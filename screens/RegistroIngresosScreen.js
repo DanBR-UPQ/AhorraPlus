@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
-import { StyleSheet, Text, View, ScrollView, TextInput, ImageBackground, Pressable, TouchableOpacity, Alert, Modal } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TextInput, ImageBackground, Pressable, TouchableOpacity, Alert, Modal, Platform  } from 'react-native'
 import {TransaccionController} from "../controllers/TransaccionController"
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-export default function RegistroIngresosScreen(){
+export default function RegistroIngresosScreen({navigation}){
 
     const [categoria, setCategoria] = useState('')
     const [comentario, setComentario] = useState('');
@@ -67,7 +67,7 @@ export default function RegistroIngresosScreen(){
         <ScrollView contentContainerStyle={styles.scrollContainer} style={styles.container}>
 
             <View style={styles.titulo1}>
-                <Text style={styles.titulo2}>REGISTROS</Text>
+                <Text style={styles.titulo2}>CREAR TRANSACCIÓN</Text>
             </View>
 
             <View style={styles.pestañasContainer}>
@@ -129,7 +129,7 @@ export default function RegistroIngresosScreen(){
 
 
 
-                <Text style={styles.datos}>Comentario</Text>
+                <Text style={styles.datos}>Descripción</Text>
                 <TextInput
                     style={[styles.inputContainer, { textAlignVertical: 'top' }]}
                     value={comentario}
@@ -164,7 +164,7 @@ export default function RegistroIngresosScreen(){
                     <DateTimePicker
                         value={new Date()}
                         mode="date"
-                        display="calendar"
+                        display={Platform.OS === "ios" ? "inline" : "calendar"}
                         onChange={(event, selectedDate) => {
                             setShowCalendar(false);
 
@@ -184,7 +184,16 @@ export default function RegistroIngresosScreen(){
 
             </View>
 
+        <TouchableOpacity style={styles.btnAgregar}
+        onPress={()=> navigation.navigate('TransaccionesScreen')}
+        >
+            <Text style={styles.titulo2}>Regresar</Text>
+        </TouchableOpacity>
+
         </ScrollView>
+
+
+
     </ImageBackground>
     )
 }
@@ -251,7 +260,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     botonAnadir: {
-        backgroundColor: '#004C99', 
+        backgroundColor: 'rgba(53, 71, 111, 1)', 
         borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
@@ -289,5 +298,13 @@ const styles = StyleSheet.create({
         padding: 12,
         borderBottomWidth: 1,
         borderBottomColor: "#eee"
+    },
+    btnAgregar: {
+        marginTop: 20,
+        marginBottom: 20,
+        padding: 10,
+        backgroundColor: 'rgba(53, 71, 111, 1)',
+        borderRadius: 20,
+        alignItems: 'center',
     }
 })

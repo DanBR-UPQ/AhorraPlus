@@ -40,14 +40,23 @@ export class Transaccion {
 
     static validarDescripcion(descripcion) {
         const palabras = descripcion.trim().split(/\s+/);
-        if (palabras.length > 30) {
-            throw new Error("La descripción no puede tener más de 30 palabras");
+        if (palabras.length > 10) {
+            throw new Error("La descripción no puede tener más de 10 palabras");
+        }
+        if (!descripcion) {
+            throw new Error("La descripción no puede estar vacía")
         }
     }
     
     static validarTipo(tipo) {
         if (!["Gasto", "Ingreso"].includes(tipo)) {
             throw new Error("El tipo debe ser 'Gasto' o 'Ingreso'");
+        }
+    }
+
+    static validarFecha(fecha) {
+        if (!fecha) {
+            throw new Error("La fecha no puede estar vacía")
         }
     }
 }
