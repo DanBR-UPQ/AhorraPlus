@@ -88,11 +88,8 @@ export default function AgregarPresupuestoScreen() {
                     {
                         text: 'OK',
                         onPress: () => {
-                            if (navigation.canGoBack && navigation.canGoBack()) {
-                                navigation.goBack();
-                            } else {
-                                navigation.navigate('PresupuestoScreen'); 
-                            }
+
+                                navigation.navigate('PresupuestoScreen');
                         }
                     }
                 ]
@@ -131,16 +128,6 @@ export default function AgregarPresupuestoScreen() {
                             </Text>
                         </TouchableOpacity>
 
-                        <Text style={styles.label}>Monto</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={monto}
-                            onChangeText={setMonto}
-                            placeholder="Ej. 1500"
-                            keyboardType="numeric"
-                            placeholderTextColor="#ddd"
-                        />
-
                         <Text style={styles.label}>Año del presupuesto</Text>
                         <TextInput
                         style={styles.input}
@@ -150,6 +137,16 @@ export default function AgregarPresupuestoScreen() {
                         keyboardType="numeric"
                         placeholderTextColor="#ddd"
                     />
+
+                        <Text style={styles.label}>Monto</Text>
+                        <TextInput
+                            style={styles.input}
+                            value={monto}
+                            onChangeText={setMonto}
+                            placeholder="Ej. 1500"
+                            keyboardType="numeric"
+                            placeholderTextColor="#ddd"
+                        />
 
                         <Text style={styles.label}>Categoría</Text>
                         <TouchableOpacity
