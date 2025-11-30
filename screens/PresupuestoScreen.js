@@ -38,15 +38,35 @@ export default function PresupuestoScreen() {
         return filtroCategoria === "" ? "Seleccionar.." : filtroCategoria;
     };
 
+    const getMesNombre = (mesNumero) => {
+        const meses = [
+            "enero", "febrero", "marzo", "abril", "mayo", "junio",
+            "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+        ];
+
+        const index = parseInt(mesNumero) - 1;
+        return meses[index] || "";
+    };
+
 
     const presupuestosFiltrados = presupuestos.filter(p => {
         const coincideCategoria = filtroCategoria.trim() === "" 
             ? true 
             : p.categoria.toLowerCase().includes(filtroCategoria.toLowerCase());
 
-        const coincideFecha = filtroFecha.trim() === ""
-            ? true
-            : getMesNombre(p.nombre).toLowerCase().includes(filtroFecha.toLowerCase());
+            const coincideFecha = (() => {
+                if (filtroFecha.trim() === "") return true;
+
+                const textoFiltro = filtroFecha.toLowerCase();
+                const nombreEnTexto = p.nombre.toString().toLowerCase();
+
+                if (nombreEnTexto.includes(textoFiltro)) return true;
+
+
+                const nombreConvertido = getMesNombre(p.nombre).toLowerCase();
+                return nombreConvertido.includes(textoFiltro);
+            })();
+
 
         return coincideCategoria && coincideFecha;
     });
