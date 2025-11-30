@@ -1,6 +1,6 @@
 import { Platform } from 'react-native'
 import * as SQLite from 'expo-sqlite'
-import { Transaccion } from '../models/transaccion'
+import { Transaccion } from '../models/Transaccion'
 
 class DatabaseService {
     constructor() {
@@ -68,6 +68,7 @@ class DatabaseService {
         Transaccion.validarCategoria(categoria)
         Transaccion.validarDescripcion(descripcion || "")
         Transaccion.validarTipo(tipo)
+        Transaccion.validarFecha(fecha)
 
         if (Platform.OS === 'web') {
             const transacciones = await this.getAll()
@@ -112,6 +113,7 @@ class DatabaseService {
         if (categoria !== undefined) Transaccion.validarCategoria(categoria)
         if (descripcion !== undefined) Transaccion.validarDescripcion(descripcion)
         if (tipo !== undefined) Transaccion.validarTipo(tipo)
+        if (fecha !== undefined) Transaccion.validarFecha(fecha)
 
         if (Platform.OS === 'web') {
             const transacciones = await this.getAll()

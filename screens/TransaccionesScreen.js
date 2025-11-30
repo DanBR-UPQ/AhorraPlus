@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { StyleSheet, Text, View, Pressable, ImageBackground, FlatList, TouchableOpacity, TextInput, Modal, Alert } from 'react-native'
+import { StyleSheet, Text, View, Pressable, ImageBackground, FlatList, TouchableOpacity, TextInput, Modal, Alert, Platform  } from 'react-native'
 import { TransaccionController } from '../controllers/TransaccionController'
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-export default function TransaccionesScreen() {
+export default function TransaccionesScreen( {navigation}) {
     const [screen, setScreen] = useState('gastos')
     const [fecha, setFecha] = useState('dia')
     const [loading, setLoading] = useState(true)
@@ -102,9 +102,9 @@ export default function TransaccionesScreen() {
     }
 
     const getCategoriaLabel = () => {
-        if (filtroCat === "") return "Seleccionar..."
+        if (filtroCat === "") return "Seleccionar.."
         const found = categorias.find(cat => cat.value === filtroCat)
-        return found ? found.label : "Seleccionar..."
+        return found ? found.label : "Seleccionar.."
     }
 
     const handleSelectTransaccion = (transaccion) => {
@@ -124,6 +124,7 @@ export default function TransaccionesScreen() {
         setSelectedTransaccion(null)
         setEditingFields({})
         setShowCategoriaModalDetalles(false)
+        setShowDatePickerDetalles(false)
     }
 
     const handleUpdateField = (field, value) => {
@@ -131,44 +132,6 @@ export default function TransaccionesScreen() {
             ...prev,
             [field]: value
         }))
-    }
-
-    const getCategoriaLabelDetalles = () => {
-        const tipoTransaccion = selectedTransaccion?.tipo.toLowerCase() === 'gasto' ? 'gastos' : 'ingresos'
-        const cats =
-            [
-                { label: "Servicios", value: "Servicios" },
-                { label: "Entretenimiento", value: "Entretenimiento" },
-                { label: "Despensa", value: "Despensa" },
-                { label: "Transporte", value: "Transporte" },
-                { label: "Salario", value: "Salario" },
-                { label: "Inversiones", value: "Inversiones" },
-                { label: "Regalos", value: "Regalos" },
-                { label: "Otros", value: "Otros" },
-            ]
-        const found = cats.find(cat => cat.value === editingFields.categoria)
-        return found ? found.label : "Seleccionar..."
-    }
-
-    const categoriesDetalles =
-        [
-            { label: "Servicios", value: "Servicios" },
-            { label: "Entretenimiento", value: "Entretenimiento" },
-            { label: "Despensa", value: "Despensa" },
-            { label: "Transporte", value: "Transporte" },
-            { label: "Salario", value: "Salario" },
-            { label: "Inversiones", value: "Inversiones" },
-            { label: "Regalos", value: "Regalos" },
-            { label: "Otros", value: "Otros" },
-        ]
-
-    const handleSelectCategoriaDetalles = (value) => {
-        handleUpdateField('categoria', value)
-        setShowCategoriaModalDetalles(false)
-    }
-
-    const handleSelectTypeDetalles = (value) => {
-        handleUpdateField('tipo', value)
     }
 
     const handleGuardarCambios = async () => {
@@ -198,7 +161,6 @@ export default function TransaccionesScreen() {
             [
                 {
                     text: 'Cancelar',
-                    onPress: () => {},
                     style: 'cancel',
                 },
                 {
@@ -280,15 +242,13 @@ export default function TransaccionesScreen() {
 
                 <Text>Categoría: </Text>
                 <TouchableOpacity onPress={() => setShowCategoriaModal(true)} style={styles.fechaSelectContainer}>
-                    <TextInput
-                        value={getCategoriaLabel()}
-                        placeholder="Seleccionar..."
-                        placeholderTextColor="black"
-                        editable={false}       
-                        pointerEvents="none" 
+                    <Text
                         numberOfLines={1}
-                        ellipsizeMode="tail"   
-                    />
+                        ellipsizeMode="tail"
+                        style={{ maxWidth: 85, color: "black" }}
+                    >
+                        {getCategoriaLabel()}
+                    </Text>
                 </TouchableOpacity>
 
                 <Modal
@@ -326,19 +286,19 @@ export default function TransaccionesScreen() {
 
                 <Text> Fecha: </Text>
                 <TouchableOpacity onPress={() => setShowCalendar(true)} style={styles.fechaSelectContainer}>
-                    <TextInput
-                        value={filtroFecha}
-                        placeholder=" dd/mm/aaaa"
-                        placeholderTextColor="black"
-                        editable={false}       
-                        pointerEvents="none"   
-                    />
+                    <Text
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                        style={{ maxWidth: 90, color: "black" }}
+                    >
+                        {filtroFecha === "" ? "Seleccionar.." : filtroFecha}
+                    </Text>
                 </TouchableOpacity>
                 {showCalendar && (
                     <DateTimePicker
                         value={new Date()}
                         mode="date"
-                        display="calendar"
+                        display={Platform.OS === "ios" ? "inline" : "calendar"}
                         onChange={(event, selectedDate) => {
                             setShowCalendar(false);
 
@@ -349,9 +309,9 @@ export default function TransaccionesScreen() {
                         }}
                     />
                 )}
-                {filtroFecha !== "" && (
+
                     <Pressable
-                        onPress={() => setFiltroFecha("")}
+                        onPress={() => {setFiltroFecha(""); handleSelectCategoria("");}}
                         style={{
                             backgroundColor: 'gray',
                             borderRadius: 4,
@@ -362,7 +322,7 @@ export default function TransaccionesScreen() {
                     >
                         <Text style={{ color: 'white', fontWeight: '700' }}>X</Text>
                     </Pressable>
-                )}
+
             </View>
 
 
@@ -384,7 +344,13 @@ export default function TransaccionesScreen() {
                     }
                     style={{ width: '100%' }}
                     contentContainerStyle={transacciones.length === 0 && styles.emptyList}
-                />           
+                />        
+
+                <TouchableOpacity style={styles.btnAgregar}
+                onPress={() => navigation.navigate('RegistroIngresosScreen')}
+                >
+                    <Text style={styles.btnText}>Agregar +</Text>
+                </TouchableOpacity>   
 
             </View>
         </View>
@@ -400,173 +366,124 @@ export default function TransaccionesScreen() {
             onRequestClose={handleCloseDetallesModal}
         >
             <View style={styles.modalOverlay}>
-                <View style={styles.detallesModalContent}>
-                    <Text style={styles.detallesModalTitulo}>Detalles de Transacción</Text>
+                <View style={styles.modalContent}>
+                    <Text style={styles.modalTitulo}>Editar Transacción</Text>
 
-                    <View style={styles.detallesFieldContainer}>
-                        <Text style={styles.detallesFieldLabel}>Monto:</Text>
-                        <TextInput
-                            style={styles.detallesFieldInput}
-                            value={editingFields.monto}
-                            onChangeText={(text) => handleUpdateField('monto', text)}
-                            keyboardType="decimal-pad"
-                            placeholder="0.00"
-                        />
-                    </View>
+                    <Text style={styles.label}>Monto</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={editingFields.monto}
+                        onChangeText={(text) => handleUpdateField('monto', text)}
+                        keyboardType="decimal-pad"
+                        placeholder="0.00"
+                    />
 
-                    <View style={styles.detallesFieldContainer}>
-                        <Text style={styles.detallesFieldLabel}>Tipo:</Text>
-                        <View style={styles.tipoButtonsContainer}>
-                            <TouchableOpacity 
-                                style={[
-                                    styles.tipoButton,
-                                    editingFields.tipo === 'Gasto' && styles.tipoButtonSelected
-                                ]}
-                                onPress={() => handleSelectTypeDetalles('Gasto')}
-                            >
-                                <Text style={[
-                                    styles.tipoButtonText,
-                                    editingFields.tipo === 'Gasto' && styles.tipoButtonTextSelected
-                                ]}>
-                                    Gasto
-                                </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                                style={[
-                                    styles.tipoButton,
-                                    editingFields.tipo === 'Ingreso' && styles.tipoButtonSelected
-                                ]}
-                                onPress={() => handleSelectTypeDetalles('Ingreso')}
-                            >
-                                <Text style={[
-                                    styles.tipoButtonText,
-                                    editingFields.tipo === 'Ingreso' && styles.tipoButtonTextSelected
-                                ]}>
-                                    Ingreso
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    
-
-                    <View style={styles.detallesFieldContainer}>
-                        <Text style={styles.detallesFieldLabel}>Categoría:</Text>
+                    <Text style={styles.label}>Tipo</Text>
+                    <View style={styles.tipoContainer}>
                         <TouchableOpacity 
-                            onPress={() => setShowCategoriaModalDetalles(true)} 
-                            style={styles.fechaSelectContainer}
+                            style={[styles.tipoBtn, editingFields.tipo === 'Gasto' && styles.tipoBtnActive]}
+                            onPress={() => handleUpdateField('tipo', 'Gasto')}
                         >
-                            <TextInput
-                                value={getCategoriaLabelDetalles()}
-                                placeholder="Seleccionar..."
-                                placeholderTextColor="black"
-                                editable={false}
-                                pointerEvents="none"
-                                numberOfLines={1}
-                                ellipsizeMode="tail"
-                            />
+                            <Text style={[styles.tipoBtnText, editingFields.tipo === 'Gasto' && styles.tipoBtnTextActive]}>
+                                Gasto
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity 
+                            style={[styles.tipoBtn, editingFields.tipo === 'Ingreso' && styles.tipoBtnActive]}
+                            onPress={() => handleUpdateField('tipo', 'Ingreso')}
+                        >
+                            <Text style={[styles.tipoBtnText, editingFields.tipo === 'Ingreso' && styles.tipoBtnTextActive]}>
+                                Ingreso
+                            </Text>
                         </TouchableOpacity>
                     </View>
 
-                    <Modal
-                        visible={showCategoriaModalDetalles}
-                        transparent={true}
-                        animationType="fade"
-                    >
-                        <View style={styles.modalOverlay}>
-                            <View style={styles.modalContent}>
-                                <Text style={styles.modalTitulo}>Seleccionar Categoría</Text>
-                                {categoriesDetalles.map((cat, index) => (
-                                    <TouchableOpacity
-                                        key={index}
-                                        style={styles.categoryOpcion}
-                                        onPress={() => handleSelectCategoriaDetalles(cat.value)}
-                                    >
-                                        <Text style={[
-                                            styles.categoryOpcionText,
-                                            editingFields.categoria === cat.value && styles.categoryOpcionSelected
-                                        ]}>
-                                            {cat.label}
-                                        </Text>
-                                    </TouchableOpacity>
-                                ))}
-                                <TouchableOpacity
-                                    style={styles.cerrarModalButton}
-                                    onPress={() => setShowCategoriaModalDetalles(false)}
-                                >
-                                    <Text style={styles.cerrarModalButtonText}>Cancelar</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </Modal>
-
-
-                    <View style={styles.detallesFieldContainer}>
-                        <Text style={styles.detallesFieldLabel}>Fecha:</Text>
-                        <TouchableOpacity 
-                            onPress={() => setShowDatePickerDetalles(true)} 
-                            style={styles.fechaSelectContainer}
-                        >
-                            <TextInput
-                                value={editingFields.fecha}
-                                placeholder="dd/mm/aaaa"
-                                placeholderTextColor="black"
-                                editable={false}
-                                pointerEvents="none"
-                            />
-                        </TouchableOpacity>
-                    </View>
-
-                    {showDatePickerDetalles && (
-                        <DateTimePicker
-                            value={new Date()}
-                            mode="date"
-                            display="calendar"
-                            onChange={(event, selectedDate) => {
-                                setShowDatePickerDetalles(false);
-                                if (selectedDate) {
-                                    const f = selectedDate.toLocaleDateString("es-MX");
-                                    handleUpdateField('fecha', f);
-                                }
-                            }}
-                        />
-                    )}
-
-                    <View style={styles.detallesFieldContainer}>
-                        <Text style={styles.detallesFieldLabel}>Descripción:</Text>
-                        <TextInput
-                            style={styles.detallesFieldInput}
-                            value={editingFields.descripcion}
-                            onChangeText={(text) => handleUpdateField('descripcion', text)}
-                            placeholder="Agregar descripción"
-                            multiline
-                            numberOfLines={3}
-                        />
-                    </View>
-
-                    <View style={styles.detallesButtonsContainer}>
-                        <TouchableOpacity 
-                            style={styles.guardarButton}
-                            onPress={handleGuardarCambios}
-                        >
-                            <Text style={styles.guardarButtonText}>Guardar</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity 
-                            style={styles.deleteButton}
-                            onPress={handleDeleteTransaccion}
-                        >
-                            <Text style={styles.guardarButtonText}>Eliminar</Text>
-                        </TouchableOpacity>
-                    </View>
-
+                    <Text style={styles.label}>Categoría</Text>
                     <TouchableOpacity 
-                        style={styles.cerrarDetallesButton}
-                        onPress={handleCloseDetallesModal}
+                        onPress={() => setShowCategoriaModalDetalles(true)} 
+                        style={styles.input}
                     >
-                        <Text style={styles.cerrarDetallesButtonText}>Cancelar</Text>
+                        <Text>{editingFields.categoria || "Seleccionar..."}</Text>
+                    </TouchableOpacity>
+
+                    <Text style={styles.label}>Fecha</Text>
+                    <TouchableOpacity 
+                        onPress={() => setShowDatePickerDetalles(true)} 
+                        style={styles.input}
+                    >
+                        <Text>{editingFields.fecha || "dd/mm/aaaa"}</Text>
+                    </TouchableOpacity>
+
+                    <Text style={styles.label}>Descripción</Text>
+                    <TextInput
+                        style={[styles.input, styles.inputMultiline]}
+                        value={editingFields.descripcion}
+                        onChangeText={(text) => handleUpdateField('descripcion', text)}
+                        placeholder="Agregar descripción"
+                        multiline
+                        numberOfLines={3}
+                    />
+
+                    <View style={styles.btnRow}>
+                        <TouchableOpacity style={styles.btnGuardar} onPress={handleGuardarCambios}>
+                            <Text style={styles.btnText}>Guardar</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.btnEliminar} onPress={handleDeleteTransaccion}>
+                            <Text style={styles.btnText}>Eliminar</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <TouchableOpacity style={styles.btnCancelar} onPress={handleCloseDetallesModal}>
+                        <Text style={styles.btnCancelarText}>Cancelar</Text>
                     </TouchableOpacity>
                 </View>
             </View>
         </Modal>
+
+        <Modal visible={showCategoriaModalDetalles} transparent={true} animationType="fade">
+            <View style={styles.modalOverlay}>
+                <View style={styles.modalContent}>
+                    <Text style={styles.modalTitulo}>Categoría</Text>
+                    {categorias.map((cat, index) => (
+                        <TouchableOpacity
+                            key={index}
+                            style={styles.categoryOpcion}
+                            onPress={() => {
+                                handleUpdateField('categoria', cat.value)
+                                setShowCategoriaModalDetalles(false)
+                            }}
+                        >
+                            <Text style={[
+                                styles.categoryOpcionText,
+                                editingFields.categoria === cat.value && styles.categoryOpcionSelected
+                            ]}>
+                                {cat.label}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                    <TouchableOpacity
+                        style={styles.cerrarModalButton}
+                        onPress={() => setShowCategoriaModalDetalles(false)}
+                    >
+                        <Text style={styles.cerrarModalButtonText}>Cancelar</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </Modal>
+
+        {showDatePickerDetalles && (
+            <DateTimePicker
+                value={new Date()}
+                mode="date"
+                display={Platform.OS === "ios" ? "inline" : "calendar"}
+                onChange={(event, selectedDate) => {
+                    setShowDatePickerDetalles(false);
+                    if (selectedDate) {
+                        handleUpdateField('fecha', selectedDate.toLocaleDateString("es-MX"));
+                    }
+                }}
+            />
+        )}
       
     </ImageBackground>
   )
@@ -625,10 +542,10 @@ const styles = StyleSheet.create({
         width: '90%',
         height: '85%',
         backgroundColor: '#D9D9D9',
-        borderRadius: 10,
+        borderRadius: 20,
     },
     filtrosContainer: {
-        flex: 1,
+        flex: 1.3,
         /* backgroundColor: '#ac9a9aff', */
         borderBottomWidth: 3,
         borderBottomColor: '#9F9393',
@@ -674,7 +591,7 @@ const styles = StyleSheet.create({
         height: 50,
         backgroundColor: 'rgba(148, 154, 177, 1)',
         borderRadius: 10,
-        marginBottom: 10,
+        marginBottom: 20,
         flexDirection: 'row',
         alignSelf: 'center',
     },
@@ -716,10 +633,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     fechaSelectContainer: {
-        backgroundColor: '#f4f4f4ff',
+       /*  backgroundColor: '#f4f4f4ff', */
         borderColor: 'gray',
         borderRadius: 4,
+        padding: 2,
         borderWidth: 1,
+        /* height: 30, */
        /*  maxWidth: '50%', */
     },
     modalOverlay: {
@@ -730,17 +649,92 @@ const styles = StyleSheet.create({
     },
     modalContent: {
         backgroundColor: 'white',
-        borderRadius: 10,
-        width: '80%',
-        paddingVertical: 20,
-        paddingHorizontal: 15,
+        borderRadius: 20,
+        width: '85%',
+        padding: 20,
+        maxHeight: '90%',
     },
     modalTitulo: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: '700',
-        marginBottom: 15,
+        marginBottom: 20,
         textAlign: 'center',
+    },
+    label: {
+        fontSize: 13,
+        fontWeight: '600',
+        marginTop: 10,
+        marginBottom: 5,
+    },
+    input: {
+        backgroundColor: '#f4f4f4',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 6,
+        padding: 10,
+        fontSize: 14,
+    },
+    inputMultiline: {
+        height: 70,
+        textAlignVertical: 'top',
+    },
+    tipoContainer: {
+        flexDirection: 'row',
+        gap: 10,
+    },
+    tipoBtn: {
+        flex: 1,
+        padding: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 10,
+        alignItems: 'center',
+        backgroundColor: '#f4f4f4',
+    },
+    tipoBtnActive: {
+        backgroundColor: 'rgba(53, 71, 111, 1)',
+        /* borderColor: 'rgba(110, 139, 201, 1)', */
+    },
+    tipoBtnText: {
+        fontWeight: '600',
         color: '#333',
+    },
+    tipoBtnTextActive: {
+        color: 'white',
+    },
+    btnRow: {
+        flexDirection: 'row',
+        gap: 10,
+        marginTop: 20,
+    },
+    btnGuardar: {
+        flex: 1,
+        backgroundColor: 'rgba(53, 71, 111, 1)',
+        padding: 10,
+        borderRadius: 20,
+        alignItems: 'center',
+    },
+    btnEliminar: {
+        flex: 1,
+        backgroundColor: '#c53030',
+        padding: 10,
+        borderRadius: 20,
+        alignItems: 'center',
+    },
+    btnText: {
+        color: 'white',
+        fontWeight: '700',
+    },
+    btnCancelar: {
+        marginTop: 10,
+        padding: 10,
+        backgroundColor: '#f0f0f0',
+        borderRadius: 20,
+        alignItems: 'center',
+    },
+    btnCancelarText: {
+        fontWeight: '600',
+        color: '#666',
     },
     categoryOpcion: {
         paddingVertical: 12,
@@ -755,7 +749,7 @@ const styles = StyleSheet.create({
     },
     categoryOpcionSelected: {
         fontWeight: '700',
-        color: 'rgba(110, 139, 201, 1)',
+        color: 'rgba(53, 71, 111, 1)',
     },
     cerrarModalButton: {
         marginTop: 15,
@@ -769,99 +763,12 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#666',
     },
-    detallesModalContent: {
-        backgroundColor: 'white',
-        borderRadius: 10,
-        width: '85%',
-        maxHeight: '90%',
-        paddingVertical: 20,
-        paddingHorizontal: 20,
-    },
-    detallesModalTitulo: {
-        fontSize: 18,
-        fontWeight: '700',
+    btnAgregar: {
+        marginTop: 10,
         marginBottom: 20,
-        textAlign: 'center',
-        color: '#333',
-    },
-    detallesFieldContainer: {
-        marginBottom: 15,
-    },
-    detallesFieldLabel: {
-        fontSize: 13,
-        fontWeight: '600',
-        color: '#333',
-        marginBottom: 6,
-    },
-    detallesFieldInput: {
-        backgroundColor: '#f4f4f4ff',
-        borderColor: 'gray',
-        borderRadius: 4,
-        borderWidth: 1,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        fontSize: 14,
-        color: '#333',
-    },
-    detallesButtonsContainer: {
-        flexDirection: 'row',
-        gap: 10,
-        marginTop: 20,
-        marginBottom: 10,
-    },
-    guardarButton: {
-        flex: 1,
-        backgroundColor: 'rgba(110, 139, 201, 1)',
-        borderRadius: 10,
-        paddingVertical: 12,
+        padding: 10,
+        backgroundColor: 'rgba(53, 71, 111, 1)',
+        borderRadius: 20,
         alignItems: 'center',
-    },
-    guardarButtonText: {
-        fontSize: 14,
-        fontWeight: '700',
-        color: 'white',
-    },
-    deleteButton: {
-        flex: 1,
-        backgroundColor: '#8a261bff',
-        borderRadius: 10,
-        paddingVertical: 12,
-        alignItems: 'center',
-    },
-    cerrarDetallesButton: {
-        paddingVertical: 12,
-        backgroundColor: '#f0f0f0',
-        borderRadius: 6,
-        alignItems: 'center',
-    },
-    cerrarDetallesButtonText: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#666',
-    },
-    tipoButtonsContainer: {
-        flexDirection: 'row',
-        gap: 10,
-    },
-    tipoButton: {
-        flex: 1,
-        borderWidth: 2,
-        borderColor: '#ccc',
-        borderRadius: 10,
-        paddingVertical: 10,
-        alignItems: 'center',
-        backgroundColor: '#f4f4f4ff',
-    },
-    tipoButtonSelected: {
-        borderColor: 'rgba(110, 139, 201, 1)',
-        backgroundColor: 'rgba(110, 139, 201, 1)',
-    },
-    tipoButtonText: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#333',
-    },
-    tipoButtonTextSelected: {
-        color: 'white',
-    },
+    }
 })
