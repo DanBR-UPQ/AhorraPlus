@@ -5,22 +5,21 @@ export default function DrawerLateral({ navigation, currentRoute }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const menuItems = [
-    'HomeScreen',
-    'LoginScreen',
-    'RecuperarContraseña',
-    'TestScreen',
-    'TransaccionesScreen',
-    'GraficosScreen',
-    'PresupuestoScreen',
-    'AgregarPresupuestoScreen',
-    'EditarPresupuestoScreen',
-    'RegistroIngresosScreen',
-    'EditarRegistroScreen',
-    'PagosScreen',
-    'Crearpagos',
-    'Detallespagos',
-    'EditarPago',
-    'CrearScreen',
+    { label: 'Inicio', route: 'HomeScreen' },
+    { label: 'Login', route: 'LoginScreen' },
+    { label: 'Transacciones', route: 'TransaccionesScreen' },
+    { label: 'Crear Transacción', route: 'RegistroIngresosScreen' },
+    { label: 'Gráficas', route: 'GraficosScreen' },
+    { label: 'Pagos', route: 'PagosScreen' },
+    { label: 'Crear Pago', route: 'Crearpagos' },
+    { label: 'Editar Pago', route: 'EditarPago' },
+    { label: 'Recuperar Contraseña', route: 'ResetPasswordScreen' },
+    { label: 'Presupuesto', route: 'PresupuestoScreen' },
+    { label: 'Agregar Presupuesto', route: 'AgregarPresupuestoScreen' },
+    { label: 'Editar Presupuesto', route: 'EditarPresupuestoScreen' },
+    { label: 'Crear nueva cuenta', route: 'CrearScreen' },
+    { label: 'Test', route: 'TestScreen' },
+    { label: 'Detalles pagos', route: 'Detallespagos' },
   ];
 
   const toggleSidebar = () => {
@@ -63,25 +62,25 @@ export default function DrawerLateral({ navigation, currentRoute }) {
           </View>
           
           <ScrollView showsVerticalScrollIndicator={false}>
-            {menuItems.map((name) => (
+            {menuItems.map((item) => (
               <TouchableOpacity
-                key={name}
+                key={item.route}
                 style={[
                   styles.menuItem,
-                  currentRoute === name && styles.menuItemActivo
+                  currentRoute === item.route && styles.menuItemActivo
                 ]}
                 onPress={() => {
-                  navigation.navigate(name);
+                  navigation.navigate(item.route);
                   setIsOpen(false);
                 }}
               >
                 <Text
                   style={[
                     styles.menuText,
-                    currentRoute === name && styles.menuTextActivo
+                    currentRoute === item.route && styles.menuTextActivo
                   ]}
                 >
-                  {name}
+                  {item.label}
                 </Text>
               </TouchableOpacity>
             ))}
