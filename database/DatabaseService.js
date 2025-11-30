@@ -3,64 +3,65 @@ import * as SQLite from 'expo-sqlite';
 import { Transaccion } from '../models/transaccion';
 
 class DatabaseService {
-  constructor() {
-    this.db = null;
-    this.storageKey = 'transacciones';
-    this.storageKeyPresupuestos = 'presupuestos';
-    this.storageKeyPagos = 'pagos';
-  }
-
-  async initialize() {
-    if (Platform.OS === 'web') {
-      console.log('Usando LocalStorage para web');
-    } else {
-      console.log('Usando SQLite para móvil');
-      this.db = await SQLite.openDatabaseAsync('miapp.db', { useNewConnection: true });
-
-      // Tablas
-      await this.db.execAsync(`
-        CREATE TABLE IF NOT EXISTS transacciones (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          monto REAL NOT NULL,
-          categoria TEXT NOT NULL,
-          fecha TEXT NOT NULL,
-          descripcion TEXT,
-          tipo TEXT NOT NULL
-        )
-      `);
-
-      await this.db.execAsync(`
-        CREATE TABLE IF NOT EXISTS presupuestos (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          nombre TEXT NOT NULL,
-          monto REAL NOT NULL,
-          categoria TEXT
-        )
-      `);
-
-      await this.db.execAsync(`
-        CREATE TABLE IF NOT EXISTS pagos (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          nombre TEXT NOT NULL,
-          monto REAL NOT NULL,
-          fecha TEXT NOT NULL,
-          metodo TEXT
-        )
-      `);
+    constructor() {
+        this.db = null
+        this.storageKey = 'transacciones'
+        this.storageKeyPresupuestos = 'presupuestos';
     }
-  }
 
-  // ===========================================================================================================================
-  // TRANSACCIONES
-  // ===========================================================================================================================
-  async getAllTransaccion() {
-    if (Platform.OS === 'web') {
-      const data = localStorage.getItem(this.storageKey);
-      return data ? JSON.parse(data) : [];
-    } else {
-      return await this.db.getAllAsync('SELECT * FROM transacciones ORDER BY id DESC');
+    async initialize() {
+        if (Platform.OS === 'web') {
+            console.log('Usando LocalStorage para web');
+        } else {
+            console.log('Usando SQLite para móvil')
+            /* this.db = await SQLite.openDatabaseAsync('miapp.db') */
+            this.db = await SQLite.openDatabaseAsync('miapp.db', { useNewConnection: true });
+            await this.db.execAsync(`
+                CREATE TABLE IF NOT EXISTS transacciones (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    monto REAL NOT NULL,
+                    categoria TEXT NOT NULL,
+                    fecha TEXT NOT NULL,
+                    descripcion TEXT,
+                    tipo TEXT NOT NULL
+                )
+            `)
+            await this.db.execAsync(`
+                CREATE TABLE IF NOT EXISTS presupuestos (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    nombre TEXT NOT NULL,
+                    monto REAL NOT NULL,
+                    categoria TEXT
+                )
+            `)
+
+        }
     }
-  }
+
+
+    // ===========================================================================================================================
+    //                                                  FUNCIONES USUARIO
+    // ===========================================================================================================================
+
+
+
+
+    // ===========================================================================================================================
+    //                                                  FUNCIONES TRANSACCION
+    // ===========================================================================================================================
+
+    async getAllTransaccion() {
+        if (Platform.OS === 'web') {
+            const data = localStorage.getItem(this.storageKey)
+            return data ? JSON.parse(data) : []
+        } else {
+            return await this.db.getAllAsync('SELECT * FROM transacciones ORDER BY id DESC')
+        }
+    }
+
+
+
+
 
   async addTransaccion(monto, categoria, fecha, descripcion, tipo) {
     Transaccion.validarMonto(monto);

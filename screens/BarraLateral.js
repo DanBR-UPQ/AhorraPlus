@@ -22,7 +22,7 @@ export default function BarraLateral({navigation}) {
 
   const screens = {
     'Inicio': <HomeScreen />,
-    'Login': <LoginScreen />,
+    'Login': <LoginScreen goTo={(name) => { setScreen(name); setBarraAbierta(false); }} />,
     'Transacciones': <TransaccionesScreen />,
     'Crear registro': <RegistroIngresosScreen />,
     'Editar registro': <EditarRegistroScreen />,
