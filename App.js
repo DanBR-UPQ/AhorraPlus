@@ -15,6 +15,7 @@ import EditarRegistroScreen from './screens/EditarRegistroScreen';
 import GraficosScreen from './screens/GraficosScreen';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
+import ResetPasswordScreen from './screens/ResetPasswordScreen';
 import PagosScreen from './screens/PagosScreen';
 import PresupuestoScreen from './screens/PresupuestoScreen';
 import RegistroIngresosScreen from './screens/RegistroIngresosScreen';
@@ -36,6 +37,7 @@ export default function App() {
 
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} />
         <Stack.Screen name="TestScreen" component={TestScreen} />
 
         <Stack.Screen name="TransaccionesScreen" component={TransaccionesScreen} />
