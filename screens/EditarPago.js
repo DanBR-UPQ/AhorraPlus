@@ -1,143 +1,151 @@
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, ImageBackground } from 'react-native';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import DatabaseService from '../database/DatabaseService';
 
-export default function Editarpago() {
-  const [form, setForms] = useState({
-    nombre: 'Pago de mantenimiento',
-    fecha: '2025-11-15',
-    hora: '12:00',
-    monto: '1500',
-  });
+export default function EditarPago() {
+  const [nombre, setNombre] = useState('');
+  const [monto, setMonto] = useState('');
+  const [fecha, setFecha] = useState('');
+  const [metodo, setMetodo] = useState('');
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { id } = route.params || {};
 
-  const handleAceptar = () => {
-    console.log('Pago actualizado:', form);
+  useEffect(() => {
+    cargarPago();
+  }, []);
+
+  const cargarPago = async () => {
+    try {
+      const pagos = await DatabaseService.getAllPagos();
+      const pago = pagos.find(p => p.id === id);
+      if (!pago) {
+        Alert.alert('Error', 'No se encontró el pago');
+        return;
+      }
+
+      setNombre(pago.nombre || '');
+      setMonto(pago.monto ? pago.monto.toString() : '');
+      setFecha(pago.fecha || '');
+      setMetodo(pago.metodo || '');
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'No se pudo cargar el pago');
+    }
   };
 
-  const handleCancelar = () => {
-    console.log('Edición cancelada');
-  };
+  const actualizarPago = async () => {
+    if (!nombre || !monto || !fecha || !metodo) {
+      Alert.alert('Error', 'Por favor completa todos los campos');
+      return;
+    }
 
-  const handleEliminar = () => {
-    console.log('Pago eliminado');
+    try {
+      await DatabaseService.updatePago(id, {
+        nombre,
+        monto: parseFloat(monto),
+        fecha,
+        metodo,
+      });
+      Alert.alert('Éxito', 'Pago actualizado correctamente');
+
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      } else {
+        navigation.navigate('PagosScreen');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'No se pudo actualizar el pago');
+    }
   };
 
   return (
-    <ImageBackground
-    source={require('../assets/fondoEditarPago.png')}
-    resizeMode='cover'
-    style={styles.background}  
-    >
-      <View style={styles.contenedor}>
-        <Text style={styles.titulo}>Editar pago</Text>
-
-        <TextInput
-          placeholder="Nombre del pago"
-          value={form.nombre}
-          onChangeText={(texto) => setForms({ ...form, nombre: texto })}
-          style={styles.entrada}
-          placeholderTextColor="#999"
-        />
-        <TextInput
-          placeholder="Fecha del pago"
-          value={form.fecha}
-          onChangeText={(texto) => setForms({ ...form, fecha: texto })}
-          style={styles.entrada}
-          placeholderTextColor="#999"
-        />
-        <TextInput
-          placeholder="Hora del pago"
-          value={form.hora}
-          onChangeText={(texto) => setForms({ ...form, hora: texto })}
-          style={styles.entrada}
-          placeholderTextColor="#999"
-        />
-        <TextInput
-          placeholder="Monto del pago"
-          value={form.monto}
-          onChangeText={(texto) => setForms({ ...form, monto: texto })}
-          style={styles.entrada}
-          keyboardType="numeric"
-          placeholderTextColor="#999"
-        />
-
-        <View style={styles.botonesContainer}>
-          <TouchableOpacity style={[styles.boton, styles.botonAceptar]} onPress={handleAceptar}>
-            <Text style={styles.textoBoton}>Aceptar</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={[styles.boton, styles.botonCancelar]} onPress={handleCancelar}>
-            <Text style={styles.textoBoton}>Cancelar</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={[styles.boton, styles.botonEliminar]} onPress={handleEliminar}>
-            <Text style={styles.textoBoton}>Eliminar</Text>
-          </TouchableOpacity>
-        </View>
+    <View style={styles.fondo}>
+      <View style={styles.cuadroArriba}>
+        <Text style={styles.letra}>Editar Pago</Text>
       </View>
-    </ImageBackground>
+
+      <View style={styles.formulario}>
+        <TextInput
+          style={styles.input}
+          placeholder="Nombre del pago"
+          placeholderTextColor="#ccc"
+          value={nombre}
+          onChangeText={setNombre}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Monto"
+          placeholderTextColor="#ccc"
+          keyboardType="numeric"
+          value={monto}
+          onChangeText={setMonto}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Fecha (Año-Mes-Día)"
+          placeholderTextColor="#ccc"
+          value={fecha}
+          onChangeText={setFecha}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Método de pago"
+          placeholderTextColor="#ccc"
+          value={metodo}
+          onChangeText={setMetodo}
+        />
+
+        <TouchableOpacity style={styles.botonGuardar} onPress={actualizarPago}>
+          <Text style={styles.textoBoton}>Actualizar</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  background: {
+  fondo: {
     flex: 1,
-    backgroundColor: '#021024',
+    backgroundColor: '#052659',
+  },
+  cuadroArriba: {
+    backgroundColor: '#5483b3',
+    width: '100%',
+    height: '20%',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  contenedor: {
-    width: '90%',
-    backgroundColor: '#7DA0CA',
-    borderRadius: 12,
-    padding: 20,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  titulo: {
-    fontSize: 22,
+  letra: {
+    fontSize: 28,
+    color: 'white',
     fontWeight: 'bold',
-    color: '#052659',
-    marginBottom: 20,
-    textAlign: 'center',
   },
-  entrada: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
+  formulario: {
+    marginHorizontal: 30,
+    marginTop: 30,
+  },
+  input: {
+    backgroundColor: '#3aa0b3',
+    color: 'white',
     padding: 12,
-    marginBottom: 12,
+    borderRadius: 10,
+    marginBottom: 15,
     fontSize: 16,
-    color: '#333',
-    backgroundColor: '#f9f9f9',
   },
-  botonesContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  boton: {
-      flex: 1,
-      marginHorizontal: 5,
-      borderRadius: 25,
-      paddingVertical: 8,
-      alignItems: 'center',
-      justifyContent: 'center',
-  },
-  botonAceptar: {
-    backgroundColor: '#007AFF',
-  },
-  botonCancelar: {
-    backgroundColor: '#888',
-  },
-  botonEliminar: {
-    backgroundColor: '#D9534F',
+  botonGuardar: {
+    backgroundColor: '#F39C12',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'white',
   },
   textoBoton: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: 'white',
     fontSize: 16,
+    fontWeight: 'bold',
   },
 });

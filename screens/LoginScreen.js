@@ -1,53 +1,88 @@
 import { Text, StyleSheet, View, ImageBackground,TextInput, Image, Button,Alert} from 'react-native'
 import React, { useState } from 'react'
+import DatabaseService from '../database/DatabaseService'
+import UsuarioController from '../controllers/UsuarioController'
+import { useNavigation } from '@react-navigation/native';
+export default function LoginScreen ({ goTo }) {
+const[correo, setCorreo]= useState('');
+const[clave, setClave] = useState('');
+const navigation = useNavigation();
+const handleLogin = async () => {
+    try {
+        await UsuarioController.initialize()
+        if (correo.trim() === '' || clave.trim() === '') {
+            Alert.alert('Error', 'rellena todos los campos');
+            return;
+        }
 
-
-
-
-
-export default function LoginScreen () {
-const[correo, setCorreo]= useState('ingresa un correo o telefono');
-const[clave, setClave] = useState('ingresa una clave');
-const handleLogin = () => {
-  if (correo.trim() === '' || clave.trim() === '') {
-    Alert.alert('Error', 'rellena todos los campos');
-    return;
-  }
-
-  Alert.alert( 'Inicio de sesión correcto.');
+        await UsuarioController.login(correo.trim(), clave)
+        Alert.alert('Éxito', 'Inicio de sesión correcto.')
+        navigation.navigate('HomeScreen')
+        // en BarraLateral el cambio de pantalla ya ocurre por la UI; podríamos notificar o cambiar estado si es necesario
+    } catch (err) {
+        Alert.alert('Error', err.message || 'Error en login')
+    }
 };
 
-    return (
-        <View style={styles.background}>
+const handleRegister = async () => {
+    try {
+        await UsuarioController.initialize()
+        if (correo.trim() === '' || clave.trim() === '') {
+            Alert.alert('Error', 'rellena todos los campos');
+            return;
+        }
 
-       <Text style={styles.titulos}> Bienvenido</Text>
-         <Image
-    source={require('../assets/usuario.png')} 
-    style={styles.avatar}
-  />
-        <View style={styles.formulario}>
+        // guarda usuario (nota: contraseña se guarda en texto plano en esta implementación)
+        // intentar registro vía controlador
+        await UsuarioController.register('', correo.trim(), null, clave)
+        Alert.alert('Éxito', 'Usuario registrado')
+    } catch (err) {
+        Alert.alert('Error', err.message || 'Error en registro')
+    }
+}
+
+const handleRecovery = () => {
+    if (goTo && typeof goTo === 'function') {
+        goTo('Recuperar Contraseña')
+    } else {
+        navigation.navigate('ResetPasswordScreen')
+    }
+}
+
+        return (
+                <View style={styles.background}>
+
+             <Text style={styles.titulos}> Bienvenido</Text>
+                 <Image
+        source={require('../assets/usuario.png')} 
+        style={styles.avatar}
+    />
+                <View style={styles.formulario}>
             
-            <Text style={styles.subtitulos}>Ingresa tu correo</Text>
-            <TextInput style={styles.entrada}
-            placeholder='correo'
-            onChangeText={(valor)=>setCorreo(valor)}
-            placeholderTextColor="rgba(255,255,255,0.7)"
-            />
+                        <Text style={styles.subtitulos}>Ingresa tu correo</Text>
+                        <TextInput style={styles.entrada}
+                        placeholder='correo'
+                        value={correo}
+                        onChangeText={(valor)=>setCorreo(valor)}
+                        placeholderTextColor="rgba(255,255,255,0.7)"
+                        />
           
-            <Text style={styles.subtitulos}>Ingresa tu contraseña</Text>
-            <TextInput style={styles.entrada}
-            placeholder='contraseña'
-            onChangeText={(pas)=>setClave(pas)}
-            placeholderTextColor="rgba(255,255,255,0.7)"
-            />
-            <Button title='iniciar sesion' style={styles.boton} onPress={handleLogin}></Button>
-            <Button title='Registrarse' style={styles.boton}></Button>
+                        <Text style={styles.subtitulos}>Ingresa tu contraseña</Text>
+                        <TextInput style={styles.entrada}
+                        placeholder='contraseña'
+                        value={clave}
+                        secureTextEntry={true}
+                        onChangeText={(pas)=>setClave(pas)}
+                        placeholderTextColor="rgba(255,255,255,0.7)"
+                        />
+                        <Button title='Iniciar sesión' style={styles.boton} onPress={handleLogin}></Button>
+                        <Button title='Registrarse' style={styles.boton} onPress={handleRegister}></Button>
+                        <Button title='Recuperar contraseña' style={styles.boton} onPress={handleRecovery}></Button>
 
-        </View>
+                </View>
 
-   
-       </View>
-    )
+             </View>
+        )
   
 }
 

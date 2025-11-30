@@ -1,107 +1,121 @@
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, ImageBackground } from 'react-native';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import DatabaseService from '../database/DatabaseService';
 
 export default function Crearpagos() {
-  const [form, setForms] = useState({
-    nombre: '',
-    fecha: '',
-    hora: '',
-    monto: '',
-  });
+  const [nombre, setNombre] = useState('');
+  const [monto, setMonto] = useState('');
+  const [fecha, setFecha] = useState('');
+  const [metodo, setMetodo] = useState('');
+  const navigation = useNavigation();
+
+  const guardarPago = async () => {
+    if (!nombre || !monto || !fecha || !metodo) {
+      Alert.alert('Error', 'Por favor completa todos los campos');
+      return;
+    }
+
+    try {
+      await DatabaseService.addPago(nombre, parseFloat(monto), fecha, metodo);
+      Alert.alert('Éxito', 'Pago agregado correctamente');
+
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      } else {
+        navigation.navigate('PagosScreen');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'No se pudo guardar el pago');
+    }
+  };
 
   return (
-    <ImageBackground 
-    source={require('../assets/fondoEditarPago.png')}
-    resizeMode='cover' 
-    style={styles.background}
-    >
-      <View style={styles.contenedor}>
-        <Text style={styles.titulo}>Crear próximo pago</Text>
+    <View style={styles.fondo}>
+      <View style={styles.cuadroArriba}>
+        <Text style={styles.letra}>Agregar Pago</Text>
+      </View>
 
+      <View style={styles.formulario}>
         <TextInput
+          style={styles.input}
           placeholder="Nombre del pago"
-          value={form.nombre}
-          onChangeText={(texto) => setForms({ ...form, nombre: texto })}
-          style={styles.entrada}
-          placeholderTextColor="#999"
+          placeholderTextColor="#ccc"
+          value={nombre}
+          onChangeText={setNombre}
         />
         <TextInput
-          placeholder="Fecha del pago"
-          value={form.fecha}
-          onChangeText={(texto) => setForms({ ...form, fecha: texto })}
-          style={styles.entrada}
-          placeholderTextColor="#999"
-        />
-        <TextInput
-          placeholder="Hora del pago"
-          value={form.hora}
-          onChangeText={(texto) => setForms({ ...form, hora: texto })}
-          style={styles.entrada}
-          placeholderTextColor="#999"
-        />
-        <TextInput
-          placeholder="Monto del pago"
-          value={form.monto}
-          onChangeText={(texto) => setForms({ ...form, monto: texto })}
-          style={styles.entrada}
+          style={styles.input}
+          placeholder="Monto"
+          placeholderTextColor="#ccc"
           keyboardType="numeric"
-          placeholderTextColor="#999"
+          value={monto}
+          onChangeText={setMonto}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Fecha (Año-Mes-Día)"
+          placeholderTextColor="#ccc"
+          value={fecha}
+          onChangeText={setFecha}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Método de pago"
+          placeholderTextColor="#ccc"
+          value={metodo}
+          onChangeText={setMetodo}
         />
 
-        <TouchableOpacity style={styles.boton}>
-          <Text style={styles.textoBoton}>Guardar Pago</Text>
+        <TouchableOpacity style={styles.botonGuardar} onPress={guardarPago}>
+          <Text style={styles.textoBoton}>Guardar</Text>
         </TouchableOpacity>
       </View>
-    </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  background: {
+  fondo: {
     flex: 1,
     backgroundColor: '#052659',
+  },
+  cuadroArriba: {
+    backgroundColor: '#5483b3',
+    width: '100%',
+    height: '20%',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
   },
-  contenedor: {
-    width: '100%',
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  titulo: {
-    fontSize: 22,
+  letra: {
+    fontSize: 28,
+    color: 'white',
     fontWeight: 'bold',
-    color: '#052659',
-    marginBottom: 20,
-    textAlign: 'center',
   },
-  entrada: {
-    borderWidth: 1,
-    borderColor: '#C1E8FF',
-    borderRadius: 8,
+  formulario: {
+    marginHorizontal: 30,
+    marginTop: 30,
+  },
+  input: {
+    backgroundColor: '#3aa0b3',
+    color: 'white',
     padding: 12,
-    marginBottom: 12,
+    borderRadius: 10,
+    marginBottom: 15,
     fontSize: 16,
-    color: '#052659',
-    backgroundColor: '#F9F9F9',
   },
-  boton: {
-    backgroundColor: '#5483B3',
-    paddingVertical: 15,
-    borderRadius: 8,
+  botonGuardar: {
+    backgroundColor: '#27AE60',
+    paddingVertical: 12,
+    borderRadius: 10,
     alignItems: 'center',
-    marginTop: 10,
+    borderWidth: 1,
+    borderColor: 'white',
   },
   textoBoton: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: 'white',
     fontSize: 16,
+    fontWeight: 'bold',
   },
 });
