@@ -1,12 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, ImageBackground} from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, ImageBackground, Pressable} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import PresupuestoController from '../controllers/PresupuestoController';
 
 
 export default function PresupuestoScreen() {
     const [presupuestos, setPresupuestos] = useState([]);
+    const [filtroCategoria, setFiltroCategoria] = useState("");
+    const [filtroFecha, setFiltroFecha] = useState("");
+
     const controllerRef = useRef(new PresupuestoController());
     const controller = controllerRef.current;
 
@@ -31,7 +34,22 @@ export default function PresupuestoScreen() {
         };
     }, []);
 
+    const getCategoriaLabel = () => {
+        return filtroCategoria === "" ? "Seleccionar.." : filtroCategoria;
+    };
 
+
+    const presupuestosFiltrados = presupuestos.filter(p => {
+        const coincideCategoria = filtroCategoria.trim() === "" 
+            ? true 
+            : p.categoria.toLowerCase().includes(filtroCategoria.toLowerCase());
+
+        const coincideFecha = filtroFecha.trim() === ""
+            ? true
+            : getMesNombre(p.nombre).toLowerCase().includes(filtroFecha.toLowerCase());
+
+        return coincideCategoria && coincideFecha;
+    });
 
 
     return (
@@ -46,7 +64,52 @@ export default function PresupuestoScreen() {
             </View>
 
 
-            {presupuestos.map(p => (
+
+            <View style={styles.filtrosContainer}>
+
+
+                <Text>Categoría: </Text>
+
+                <TouchableOpacity style={styles.fechaSelectContainer}>
+                    <TextInput
+                        value={filtroCategoria}
+                        onChangeText={setFiltroCategoria}
+                        placeholder="Seleccionar.."
+                        style={{ maxWidth: 85, color: "black" }}
+                        numberOfLines={1}
+                    />
+                </TouchableOpacity>
+
+                <Text> Fecha: </Text>
+
+                <TouchableOpacity style={styles.fechaSelectContainer}>
+                    <TextInput
+                        value={filtroFecha}
+                        onChangeText={setFiltroFecha}
+                        placeholder="Seleccionar.."
+                        style={{ maxWidth: 90, color: "black" }}
+                        numberOfLines={1}
+                    />
+                </TouchableOpacity>
+                
+                <Pressable
+                    onPress={() => {setFiltroFecha(""); setFiltroCategoria("");}}
+                    style={{
+                        backgroundColor: 'gray',
+                        borderRadius: 4,
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        marginStart: 5,
+                    }}
+                >
+                    <Text style={{ color: 'white', fontWeight: '700' }}>X</Text>
+                </Pressable>
+
+            </View>
+            
+
+
+            {presupuestosFiltrados.map(p => (
                 <View key={p.id} style={styles.meta}>
                     <View style={styles.fondoMeta}>
                     <Text style={styles.metaTexto}>{p.nombre}</Text>
@@ -173,5 +236,29 @@ const styles = StyleSheet.create({
         color: 'black',
         fontSize: 14,
         fontWeight: '600',
+    },
+    filtrosContainer: {
+        flex: 1.3,
+        /* backgroundColor: '#ac9a9aff', */
+        borderBottomWidth: 3,
+        borderBottomColor: '#9F9393',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        /* flexWrap: 'wrap', */
+    },
+    montoText: {
+        /* fontFamily: 'Inter', */
+        fontWeight: '600',
+        fontSize: 16,
+    },
+    fechaSelectContainer: {
+       /*  backgroundColor: '#f4f4f4ff', */
+        borderColor: 'black',
+        borderRadius: 4,
+        padding: 2,
+        borderWidth: 1,
+        /* height: 30, */
+       /*  maxWidth: '50%', */
     },
 });
