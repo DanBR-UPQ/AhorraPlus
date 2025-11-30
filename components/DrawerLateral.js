@@ -7,7 +7,7 @@ export default function DrawerLateral({ navigation, currentRoute }) {
   const menuItems = [
     'HomeScreen',
     'LoginScreen',
-    'ResetPasswordScreen',
+    'RecuperarContraseña',
     'TestScreen',
     'TransaccionesScreen',
     'GraficosScreen',

@@ -22,6 +22,7 @@ import PresupuestoScreen from './screens/PresupuestoScreen';
 import RegistroIngresosScreen from './screens/RegistroIngresosScreen';
 import TestScreen from './screens/TestScreen';
 import TransaccionesScreen from './screens/TransaccionesScreen';
+import RecuperarContraseña from './screens/RecuperarContraseña';
 
 const Stack = createStackNavigator();
 
@@ -49,7 +50,7 @@ export default function App() {
           {(props) => <ScreenWithSidebar component={HomeScreen} {...props} />}
         </Stack.Screen>
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
-        <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} />
+        <Stack.Screen name="RecuperarContraseña" component={RecuperarContraseña} />
         <Stack.Screen name="TestScreen">
           {(props) => <ScreenWithSidebar component={TestScreen} {...props} />}
         </Stack.Screen>
