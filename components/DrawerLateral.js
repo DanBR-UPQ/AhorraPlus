@@ -51,7 +51,7 @@ export default function DrawerLateral({ navigation, currentRoute }) {
               source={require('../assets/usuario.png')}
               style={styles.imagenUsuario}
             />
-            <Text style={styles.usuarioText}>Usuario</Text>
+            <Text style={styles.usuarioText}>Ahorra Plus</Text>
           </View>
           
           <ScrollView showsVerticalScrollIndicator={false}>

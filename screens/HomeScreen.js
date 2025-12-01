@@ -88,7 +88,7 @@ const verificarPresupuestos = async () => {
     source={require('../assets/usuario.png')}
     style={styles.avatar}
     ></Image>
-    <Text style={styles.letra}>Usuario</Text>
+    <Text style={styles.letra}>Bienvenido</Text>
     </View> 
     <ScrollView>
 
