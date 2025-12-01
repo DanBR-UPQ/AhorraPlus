@@ -9,6 +9,7 @@ class DatabaseService {
         this.storageKey = 'transacciones'
         this.storageKeyPresupuestos = 'presupuestos';
       this.storageKeyUsuarios = 'usuarios';
+      this.storageKeyPagos = 'pagos';
     }
 
     async initialize() {
@@ -28,6 +29,15 @@ class DatabaseService {
                     tipo TEXT NOT NULL
                 )
             `)
+            await this.db.execAsync(`
+                    CREATE TABLE IF NOT EXISTS pagos (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        nombre TEXT NOT NULL,
+                        monto REAL NOT NULL,
+                        fecha TEXT NOT NULL,
+                        metodo TEXT
+                    )
+                `);
             await this.db.execAsync(`
                 CREATE TABLE IF NOT EXISTS presupuestos (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -57,7 +67,7 @@ class DatabaseService {
             } catch (e) {
                 // ignore if column exists or ALTER not supported
             }
-
+            
         }
     }
 
