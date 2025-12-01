@@ -13,7 +13,7 @@ export default function DrawerLateral({ navigation, currentRoute }) {
     { label: 'Pagos', route: 'PagosScreen' },
     { label: 'Crear Pago', route: 'Crearpagos' },
     { label: 'Editar Pago', route: 'EditarPago' },
-    { label: 'Recuperar Contraseña', route: 'ResetPasswordScreen' },
+    { label: 'Recuperar Contraseña', route: 'RecuperarContraseña' },
     { label: 'Presupuesto', route: 'PresupuestoScreen' },
     { label: 'Agregar Presupuesto', route: 'AgregarPresupuestoScreen' },
     { label: 'Editar Presupuesto', route: 'EditarPresupuestoScreen' },

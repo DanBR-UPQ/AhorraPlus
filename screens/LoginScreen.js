@@ -25,27 +25,15 @@ const handleLogin = async () => {
 };
 
 const handleRegister = async () => {
-    try {
-        await UsuarioController.initialize()
-        if (correo.trim() === '' || clave.trim() === '') {
-            Alert.alert('Error', 'rellena todos los campos');
-            return;
-        }
-
-        // guarda usuario (nota: contraseña se guarda en texto plano en esta implementación)
-        // intentar registro vía controlador
-        await UsuarioController.register('', correo.trim(), null, clave)
-        Alert.alert('Éxito', 'Usuario registrado')
-    } catch (err) {
-        Alert.alert('Error', err.message || 'Error en registro')
-    }
+        // Navegar a la pantalla de creación para pedir nombre, teléfono y pregunta de recuperación
+        navigation.navigate('CrearScreen')
 }
 
 const handleRecovery = () => {
     if (goTo && typeof goTo === 'function') {
         goTo('Recuperar Contraseña')
     } else {
-        navigation.navigate('ResetPasswordScreen')
+        navigation.navigate('RecuperarContraseña')
     }
 }
 

@@ -1,7 +1,6 @@
-import { Text, StyleSheet, View, ImageBackground,TextInput, Image, Button,Alert, Linking } from 'react-native'
+import { Text, StyleSheet, View, ImageBackground,TextInput, Image, Button,Alert } from 'react-native'
 import React, { useState } from 'react'
 import UsuarioController from '../controllers/UsuarioController'
-import { sendRecoveryEmailBackend } from '../utils/emailApi'
 import { useNavigation } from '@react-navigation/native'
 
 
@@ -11,41 +10,31 @@ import { useNavigation } from '@react-navigation/native'
 export default function RecuperarContraseña () {
 const[correo, setCorreo]= useState('')
 const navigation = useNavigation()
+const [mascota, setMascota] = useState('')
+
 const handleEnviar = async () => {
     try {
         if (!correo || correo.trim() === '') {
             Alert.alert('Error', 'Ingresa correo o teléfono')
             return
         }
+        if (!mascota || mascota.trim() === '') {
+            Alert.alert('Error', 'Ingresa el nombre de tu primera mascota (MAYÚSCULAS)')
+            return
+        }
 
-        const { user, code } = await UsuarioController.requestRecovery(correo.trim())
+        await UsuarioController.initialize()
+        const user = await UsuarioController.verifyRecoveryAnswer(correo.trim(), mascota.trim())
         if (!user) {
-            Alert.alert('No encontrado', 'No existe ningún usuario con ese correo/teléfono')
+            Alert.alert('No coincide', 'Correo/telefono o respuesta de seguridad incorrecta')
             return
         }
-
-        // intentar enviar vía backend configurable
-        try {
-            await sendRecoveryEmailBackend(user.correo, code)
-            Alert.alert('Enviado', 'Se ha enviado un correo de recuperación a tu email')
-            return
-        } catch (err) {
-            // Mostrar el error del backend al usuario para diagnóstico
-            const msg = (err && err.message) ? err.message : String(err)
-            console.warn('Backend email failed, falling back to mailto:', msg)
-            Alert.alert('Error de envío automático', `Error backend: ${msg}. Se abrirá el cliente de correo como alternativa.`)
-            const subject = encodeURIComponent('Recuperación de contraseña')
-            const body = encodeURIComponent(`Código de recuperación: ${code}\n\nIngresa este código en la aplicación para restablecer tu contraseña. No compartas este código con nadie.`)
-            const mailto = `mailto:${user.correo}?subject=${subject}&body=${body}`
-            Linking.openURL(mailto)
-        }
+        // verificado: navegar a la pantalla de restablecer pasando el identificador
+        Alert.alert('Verificado', 'Respuesta correcta. Ahora puedes cambiar tu contraseña.')
+        navigation.navigate('ResetPasswordScreen', { identifier: correo.trim() })
     } catch (err) {
-        Alert.alert('Error', err.message || 'No se pudo enviar correo')
+        Alert.alert('Error', err.message || 'Error en verificación')
     }
-}
-
-const goToReset = () => {
-    navigation.navigate('ResetPasswordScreen')
 }
 
     return (
@@ -65,12 +54,16 @@ const goToReset = () => {
                         onChangeText={(valor) => setCorreo(valor)}
             placeholderTextColor="rgba(255,255,255,0.7)"
             />
-          
-            
-            
-            <Button title='Enviar Correo' style={styles.boton} onPress={handleEnviar}></Button>
-            <View style={{height:8}} />
-            <Button title='Ya tengo un código' style={styles.boton} onPress={goToReset}></Button>
+
+            <Text style={styles.subtitulos}>Nombre de tu primera mascota (MAYÚSCULAS)</Text>
+            <TextInput style={styles.entrada}
+            placeholder='EJ: FIDO'
+                        value={mascota}
+                        onChangeText={(valor) => setMascota(valor)}
+            placeholderTextColor="rgba(255,255,255,0.7)"
+            />
+
+            <Button title='confirmar datos' style={styles.boton} onPress={handleEnviar}></Button>
             
 
         </View>

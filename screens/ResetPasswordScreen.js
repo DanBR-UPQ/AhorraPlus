@@ -1,18 +1,23 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native'
 import UsuarioController from '../controllers/UsuarioController'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 
 export default function ResetPasswordScreen() {
-  const [identifier, setIdentifier] = useState('')
-  const [code, setCode] = useState('')
+  const route = useRoute()
+  const navigation = useNavigation()
+  const identifierParam = route && route.params && route.params.identifier ? route.params.identifier : ''
+  const [identifier, setIdentifier] = useState(identifierParam)
   const [nueva, setNueva] = useState('')
   const [confirm, setConfirm] = useState('')
-  const navigation = useNavigation()
+
+  useEffect(() => {
+    if (identifierParam) setIdentifier(identifierParam)
+  }, [identifierParam])
 
   const handleReset = async () => {
     try {
-      if (!identifier || !code || !nueva) {
+      if (!identifier || !nueva) {
         Alert.alert('Error', 'Rellena todos los campos')
         return
       }
@@ -20,9 +25,9 @@ export default function ResetPasswordScreen() {
         Alert.alert('Error', 'Las contraseñas no coinciden')
         return
       }
-      const ok = await UsuarioController.resetPassword(identifier.trim(), code.trim(), nueva)
+      const ok = await UsuarioController.resetPassword(identifier.trim(), nueva)
       if (!ok) {
-        Alert.alert('Error', 'Código inválido o expirado')
+        Alert.alert('Error', 'No se pudo cambiar la contraseña')
         return
       }
       Alert.alert('Éxito', 'Contraseña restaurada. Inicia sesión con la nueva contraseña.')
@@ -36,7 +41,6 @@ export default function ResetPasswordScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Restablecer contraseña</Text>
       <TextInput placeholder='Correo o teléfono' style={styles.input} value={identifier} onChangeText={setIdentifier} />
-      <TextInput placeholder='Código de recuperación' style={styles.input} value={code} onChangeText={setCode} />
       <TextInput placeholder='Nueva contraseña' secureTextEntry style={styles.input} value={nueva} onChangeText={setNueva} />
       <TextInput placeholder='Confirmar contraseña' secureTextEntry style={styles.input} value={confirm} onChangeText={setConfirm} />
       <Button title='Cambiar contraseña' onPress={handleReset} />

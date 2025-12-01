@@ -51,6 +51,7 @@ export default function App() {
         </Stack.Screen>
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="RecuperarContraseña" component={RecuperarContraseña} />
+        <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} />
         <Stack.Screen name="TestScreen">
           {(props) => <ScreenWithSidebar component={TestScreen} {...props} />}
         </Stack.Screen>

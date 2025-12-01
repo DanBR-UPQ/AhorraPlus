@@ -38,10 +38,24 @@ export class UsuarioController {
         return user
     }
 
-    async register(nombre, correo, telefono, clave) {
+    async register(nombre, correo, telefono, clave, recoveryAnswer) {
         await this.initialize()
+        // validar existencia para evitar constraint UNIQUE de la BD
+        const existingCorreo = correo ? await DatabaseService.getUsuarioByCorreo(correo) : null
+        const existingTelefono = telefono ? await DatabaseService.getUsuarioByTelefono(telefono) : null
+        if (existingCorreo) throw new Error('El correo ya está registrado')
+        if (existingTelefono) throw new Error('El teléfono ya está registrado')
+
         const hashed = await PasswordUtils.hashPassword(clave)
-        return await DatabaseService.addUsuario(nombre, correo, telefono, hashed)
+        // NOTE: recoveryAnswer may be provided by caller (should be stored uppercase)
+        return await DatabaseService.addUsuario(nombre, correo, telefono, hashed, recoveryAnswer)
+    }
+
+    async verifyRecoveryAnswer(identifier, answer) {
+        await this.initialize()
+        if (!identifier || !answer) return null
+        const user = await DatabaseService.verifyRecoveryAnswer(identifier, answer)
+        return user
     }
 
     async requestRecovery(identifier) {
@@ -54,11 +68,14 @@ export class UsuarioController {
         return { user, code, expires }
     }
 
-    async resetPassword(identifier, code, nuevaClave) {
+    async resetPassword(identifier, nuevaClave) {
         await this.initialize()
         const hashed = await PasswordUtils.hashPassword(nuevaClave)
-        const ok = await DatabaseService.verifyRecoveryCodeAndResetPassword(identifier, code, hashed)
-        return ok
+        // find user by identifier and update
+        const user = await DatabaseService.getUsuarioByCorreo(identifier) || await DatabaseService.getUsuarioByTelefono(identifier)
+        if (!user) return false
+        await DatabaseService.updateUsuarioClave(user.id, hashed)
+        return true
     }
 
     addListener(callback) { this.listeners.push(callback) }

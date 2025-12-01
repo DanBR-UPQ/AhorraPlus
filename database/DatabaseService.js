@@ -8,6 +8,7 @@ class DatabaseService {
         this.db = null
         this.storageKey = 'transacciones'
         this.storageKeyPresupuestos = 'presupuestos';
+      this.storageKeyUsuarios = 'usuarios';
     }
 
     async initialize() {
@@ -37,6 +38,26 @@ class DatabaseService {
                 )
             `)
 
+            await this.db.execAsync(`
+              CREATE TABLE IF NOT EXISTS usuarios (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nombre TEXT,
+                correo TEXT UNIQUE,
+                telefono TEXT UNIQUE,
+                clave TEXT,
+                recovery_code TEXT,
+                recovery_expires INTEGER,
+                recovery_answer TEXT
+              )
+            `)
+
+            // ensure recovery_answer column exists for older DBs
+            try {
+                await this.db.execAsync('ALTER TABLE usuarios ADD COLUMN recovery_answer TEXT')
+            } catch (e) {
+                // ignore if column exists or ALTER not supported
+            }
+
         }
     }
 
@@ -44,6 +65,134 @@ class DatabaseService {
     // ===========================================================================================================================
     //                                                  FUNCIONES USUARIO
     // ===========================================================================================================================
+
+    async getAllUsuarios() {
+      if (Platform.OS === 'web') {
+        const data = localStorage.getItem(this.storageKeyUsuarios)
+        return data ? JSON.parse(data) : []
+      } else {
+        return await this.db.getAllAsync('SELECT * FROM usuarios ORDER BY id DESC')
+      }
+    }
+
+    async addUsuario(nombre, correo, telefono, clave, recoveryAnswer) {
+      if (Platform.OS === 'web') {
+        const usuarios = await this.getAllUsuarios()
+        const nuevo = { id: Date.now(), nombre, correo, telefono, clave, recovery_answer: recoveryAnswer }
+        usuarios.unshift(nuevo)
+        localStorage.setItem(this.storageKeyUsuarios, JSON.stringify(usuarios))
+        return nuevo
+      } else {
+        try {
+          const result = await this.db.runAsync(
+            `INSERT INTO usuarios (nombre, correo, telefono, clave, recovery_answer) VALUES (?, ?, ?, ?, ?)`,
+            nombre, correo, telefono, clave, recoveryAnswer
+          )
+          return { id: result.lastInsertRowId, nombre, correo, telefono, clave, recovery_answer: recoveryAnswer }
+        } catch (err) {
+          // Detect UNIQUE constraint failure and return friendly error
+          const msg = (err && err.message) ? err.message : String(err)
+          if (msg.includes('UNIQUE') || msg.includes('constraint failed')) {
+            throw new Error('El correo o teléfono ya está registrado')
+          }
+          throw err
+        }
+      }
+    }
+
+    async verifyRecoveryAnswer(identifier, answerUpper) {
+      if (Platform.OS === 'web') {
+        const usuarios = await this.getAllUsuarios()
+        const user = usuarios.find(u => u.correo === identifier || u.telefono === identifier)
+        if (!user) return null
+        if (!user.recovery_answer) return null
+        return String(user.recovery_answer).toUpperCase() === String(answerUpper).toUpperCase() ? user : null
+      } else {
+        const rows = await this.db.getAllAsync('SELECT * FROM usuarios WHERE correo = ? OR telefono = ? LIMIT 1', identifier, identifier)
+        const user = (rows && rows[0]) ? rows[0] : null
+        if (!user) return null
+        if (!user.recovery_answer) return null
+        return String(user.recovery_answer).toUpperCase() === String(answerUpper).toUpperCase() ? user : null
+      }
+    }
+
+    async getUsuarioByCorreo(correo) {
+      if (Platform.OS === 'web') {
+        const usuarios = await this.getAllUsuarios()
+        return usuarios.find(u => u.correo === correo) || null
+      } else {
+        const rows = await this.db.getAllAsync('SELECT * FROM usuarios WHERE correo = ? LIMIT 1', correo)
+        return (rows && rows[0]) ? rows[0] : null
+      }
+    }
+
+    async getUsuarioByTelefono(telefono) {
+      if (Platform.OS === 'web') {
+        const usuarios = await this.getAllUsuarios()
+        return usuarios.find(u => u.telefono === telefono) || null
+      } else {
+        const rows = await this.db.getAllAsync('SELECT * FROM usuarios WHERE telefono = ? LIMIT 1', telefono)
+        return (rows && rows[0]) ? rows[0] : null
+      }
+    }
+
+    async updateUsuarioClave(id, nuevaClave) {
+      if (Platform.OS === 'web') {
+        const usuarios = await this.getAllUsuarios()
+        const idx = usuarios.findIndex(u => u.id === id)
+        if (idx === -1) throw new Error('Usuario no encontrado')
+        usuarios[idx].clave = nuevaClave
+        localStorage.setItem(this.storageKeyUsuarios, JSON.stringify(usuarios))
+        return usuarios[idx]
+      } else {
+        await this.db.runAsync('UPDATE usuarios SET clave = ? WHERE id = ?', nuevaClave, id)
+        return { id, clave: nuevaClave }
+      }
+    }
+
+    async setRecoveryCode(identifier, code, expires) {
+      // identifier puede ser correo o teléfono
+      if (Platform.OS === 'web') {
+        const usuarios = await this.getAllUsuarios()
+        const idx = usuarios.findIndex(u => u.correo === identifier || u.telefono === identifier)
+        if (idx === -1) return null
+        usuarios[idx].recovery_code = code
+        usuarios[idx].recovery_expires = expires
+        localStorage.setItem(this.storageKeyUsuarios, JSON.stringify(usuarios))
+        return usuarios[idx]
+      } else {
+        const rows = await this.db.getAllAsync('SELECT * FROM usuarios WHERE correo = ? OR telefono = ? LIMIT 1', identifier, identifier)
+        const user = (rows && rows[0]) ? rows[0] : null
+        if (!user) return null
+        await this.db.runAsync('UPDATE usuarios SET recovery_code = ?, recovery_expires = ? WHERE id = ?', code, expires, user.id)
+        user.recovery_code = code
+        user.recovery_expires = expires
+        return user
+      }
+    }
+
+    async verifyRecoveryCodeAndResetPassword(identifier, code, hashed) {
+      if (Platform.OS === 'web') {
+        const usuarios = await this.getAllUsuarios()
+        const idx = usuarios.findIndex(u => (u.correo === identifier || u.telefono === identifier) && u.recovery_code === code)
+        if (idx === -1) return false
+        const user = usuarios[idx]
+        if (!user.recovery_expires || Date.now() > user.recovery_expires) return false
+        usuarios[idx].clave = hashed
+        usuarios[idx].recovery_code = null
+        usuarios[idx].recovery_expires = null
+        localStorage.setItem(this.storageKeyUsuarios, JSON.stringify(usuarios))
+        return true
+      } else {
+        const rows = await this.db.getAllAsync('SELECT * FROM usuarios WHERE correo = ? OR telefono = ? LIMIT 1', identifier, identifier)
+        const user = (rows && rows[0]) ? rows[0] : null
+        if (!user) return false
+        if (!user.recovery_expires || Date.now() > user.recovery_expires) return false
+        if (String(user.recovery_code) !== String(code)) return false
+        await this.db.runAsync('UPDATE usuarios SET clave = ?, recovery_code = NULL, recovery_expires = NULL WHERE id = ?', hashed, user.id)
+        return true
+      }
+    }
 
 
 

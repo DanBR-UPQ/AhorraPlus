@@ -1,5 +1,7 @@
-import { Text, StyleSheet, View,TextInput } from 'react-native'
+import { Text, StyleSheet, View,TextInput, Button, Alert } from 'react-native'
 import React, { useState } from 'react'
+import UsuarioController from '../controllers/UsuarioController'
+import { useNavigation } from '@react-navigation/native'
 
 
 export default function CrearScreen () {
@@ -7,6 +9,25 @@ const[nombre, setNombre]= useState('ingresa tu nombre');
 const[correo, setCorreo]= useState('ingresa un correo o telefono');
 const[telelefoni, setTelefono] = useState('ingresa tu numero');
 const[clave, setClave] = useState('ingresa una clave');
+const[mascota, setMascota] = useState('')
+const navigation = useNavigation()
+
+const handleCrear = async () => {
+    try {
+        if (!correo || !clave || !mascota) {
+            Alert.alert('Error', 'Completa correo, clave y nombre de tu primera mascota')
+            return
+        }
+        // store recovery answer as uppercase
+        const recoveryAnswer = String(mascota).toUpperCase()
+        await UsuarioController.initialize()
+        await UsuarioController.register(nombre || '', correo.trim(), telelefoni || null, clave, recoveryAnswer)
+        Alert.alert('Éxito', 'Cuenta creada correctamente')
+        navigation.navigate('LoginScreen')
+    } catch (err) {
+        Alert.alert('Error', err.message || 'No se pudo crear cuenta')
+    }
+}
     return (
        
   <View style={styles.background}>
@@ -41,6 +62,15 @@ const[clave, setClave] = useState('ingresa una clave');
                     onChangeText={(pas)=>setClave(pas)}
                     placeholderTextColor="rgba(255,255,255,0.7)"
                     />
+
+                    <Text style={styles.subtitulos}>Nombre de tu primera mascota (MAYÚSCULAS)</Text>
+                    <TextInput style={styles.entrada}
+                    placeholder='EJ: FIDO'
+                    onChangeText={(m)=>setMascota(m)}
+                    placeholderTextColor="rgba(255,255,255,0.7)"
+                    />
+
+                    <Button title="Crear cuenta" onPress={handleCrear} />
                     
 
 
