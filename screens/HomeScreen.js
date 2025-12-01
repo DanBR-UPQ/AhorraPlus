@@ -1,4 +1,4 @@
-import { Text, StyleSheet, View,Image,TextInput, ScrollView } from 'react-native'
+import { Text, StyleSheet, View,Image,TextInput, ScrollView, TouchableOpacity } from 'react-native'
 import React, { Component, useState, useEffect } from 'react'
 import { TransaccionController } from '../controllers/TransaccionController'
 import { PresupuestoController } from '../controllers/PresupuestoController'
@@ -80,34 +80,46 @@ const verificarPresupuestos = async () => {
         
     <Image
     source={require('../assets/usuario.png')}
-    styles={styles.avatar}
+    style={styles.avatar}
     ></Image>
     <Text style={styles.letra}>Usuario</Text>
     </View> 
+    <ScrollView>
 
-  {/* <View style={styles.botonAgregar}>
-    <Text style={styles.textoBoton}>+ Agregar Transacción</Text>
-  </View>
+        <View style={styles.contenedorBotonesVertical}>
 
-     </View>
-     <View style={styles.pagos}>
-        
-        <View style={styles.izquierda}>
-            <Text style={styles.concepto}> Hogar</Text>
-         <Text style={styles.tipo}> pago de luz</Text>
-         </View>
-         <View style={styles.derecha}>
-    <Text style={styles.monto}>$500</Text>
-    <Image 
-      source={require('../assets/lapiz.png')} 
-      style={styles.lapiz} 
-    />
-  </View> */}
+          <TouchableOpacity 
+            style={styles.botonVertical} 
+            onPress={() => handlePress('TransaccionesScreen')} 
+          >
+            <Text style={styles.concepto}>Transacciones</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.botonVertical} 
+            onPress={() => handlePress('PresupuestoScreen')}
+          >
+            <Text style={styles.concepto}>Presupuestos</Text>
+          </TouchableOpacity>
+          
+
+            <TouchableOpacity 
+                style={styles.botonVertical} 
+                onPress={() => handlePress('PagosScreen')}
+            >
+                <Text style={styles.concepto}>Pagos</Text>
+            </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.botonVertical} 
+            onPress={() => handlePress('GraficosScreen')} 
+          >
+            <Text style={styles.concepto}>Gráficas</Text>
+          </TouchableOpacity>
+
+        </View>
 
 
-
-
-       {/* ZONA DE ALERTAS (PROCUREN Q QUEDE HASTA ABAJO) */}
 
 
      <View style={styles.seccionAlertas}>
@@ -133,6 +145,7 @@ const verificarPresupuestos = async () => {
          ))
        )}
      </View>
+     </ScrollView>
     </ScrollView>
     )
 
@@ -142,7 +155,7 @@ const styles = StyleSheet.create({
     cuadroArriba:{
         backgroundColor:'#5483b3',
         width:'100%',
-        height:'70%',
+        height:'30%',
         justifyContent:'center',
         alignItems:'center',
         
@@ -158,8 +171,8 @@ const styles = StyleSheet.create({
     },
     avatar:{
         justifyContent:'center',
-        width:'25%',
-        heoght:'25%',
+        width:170,
+        height:170,
 
     },
     letra:{
@@ -280,5 +293,53 @@ montoDestacado: {
   fontSize: 16,
 },
 
+contenedorBotonesVertical: {
+    alignSelf: 'center',
+    width: '80%', 
+    marginTop: 20,
+},
+
+botonVertical: {
+    backgroundColor:'#3aa0b3',
+    height: 50,
+    borderRadius: 10,
+    justifyContent: 'center',
+    marginBottom: 20, 
+    paddingLeft: 15,
+    paddingRight: 15,
+},
+
+filaBotonYLapiz: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#3aa0b3',
+    height: 50,
+    borderRadius: 10,
+    marginBottom: 10,
+    paddingRight: 15,
+},
+
+botonPagos: {
+    flex: 1, 
+    justifyContent: 'center',
+    paddingLeft: 15,
+},
+
+concepto:{
+    color: 'white',   
+    fontSize: 22,     
+    textAlign: 'left',
+    
+},
+
+derecha:{
+    flexDirection:"row",
+    alignItems:"center",
+},
+lapiz: {
+    width: 18, 
+    height: 18,
+    resizeMode: 'contain',
+}
    
 })
