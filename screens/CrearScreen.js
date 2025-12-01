@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     },
     titulo:{
         color:'white',
-        fontSize:'25',
+        fontSize:25,
         alignItems:'center',
         justifyContent:'center'
         
