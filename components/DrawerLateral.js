@@ -6,20 +6,13 @@ export default function DrawerLateral({ navigation, currentRoute }) {
 
   const menuItems = [
     { label: 'Inicio', route: 'HomeScreen' },
-    { label: 'Login', route: 'LoginScreen' },
     { label: 'Transacciones', route: 'TransaccionesScreen' },
-    { label: 'Crear Transacción', route: 'RegistroIngresosScreen' },
     { label: 'Gráficas', route: 'GraficosScreen' },
+    { label: 'Presupuestos', route: 'PresupuestoScreen' },
     { label: 'Pagos', route: 'PagosScreen' },
+    { label: 'Crear Transacción', route: 'RegistroIngresosScreen' },
+    { label: 'Crear Presupuesto', route: 'AgregarPresupuestoScreen' },
     { label: 'Crear Pago', route: 'Crearpagos' },
-    { label: 'Editar Pago', route: 'EditarPago' },
-    { label: 'Recuperar Contraseña', route: 'RecuperarContraseña' },
-    { label: 'Presupuesto', route: 'PresupuestoScreen' },
-    { label: 'Agregar Presupuesto', route: 'AgregarPresupuestoScreen' },
-    { label: 'Editar Presupuesto', route: 'EditarPresupuestoScreen' },
-    { label: 'Crear nueva cuenta', route: 'CrearScreen' },
-    { label: 'Test', route: 'TestScreen' },
-    { label: 'Detalles pagos', route: 'Detallespagos' },
   ];
 
   const toggleSidebar = () => {
