@@ -10,6 +10,25 @@ class DatabaseService {
         this.storageKeyPresupuestos = 'presupuestos';
       this.storageKeyUsuarios = 'usuarios';
       this.storageKeyPagos = 'pagos';
+      this.currentUserId = null;
+    }
+
+    
+    setCurrentUser(userId) {
+        this.currentUserId = userId;
+    }
+
+    
+    getCurrentUserId() {
+        if (!this.currentUserId) {
+            throw new Error('No hay un usuario activo. Por favor inicia sesión.');
+        }
+        return this.currentUserId;
+    }
+
+    
+    logout() {
+        this.currentUserId = null;
     }
 
     async initialize() {
@@ -22,6 +41,7 @@ class DatabaseService {
             await this.db.execAsync(`
                 CREATE TABLE IF NOT EXISTS transacciones (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    usuario_id INTEGER,
                     monto REAL NOT NULL,
                     categoria TEXT NOT NULL,
                     fecha TEXT NOT NULL,
@@ -32,6 +52,7 @@ class DatabaseService {
             await this.db.execAsync(`
                     CREATE TABLE IF NOT EXISTS pagos (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        usuario_id INTEGER,
                         nombre TEXT NOT NULL,
                         monto REAL NOT NULL,
                         fecha TEXT NOT NULL,
@@ -41,6 +62,7 @@ class DatabaseService {
             await this.db.execAsync(`
                 CREATE TABLE IF NOT EXISTS presupuestos (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    usuario_id INTEGER,
                     nombre TEXT NOT NULL,
                     monto REAL NOT NULL,
                     categoria TEXT, 
@@ -66,6 +88,25 @@ class DatabaseService {
                 await this.db.execAsync('ALTER TABLE usuarios ADD COLUMN recovery_answer TEXT')
             } catch (e) {
                 // ignore if column exists or ALTER not supported
+            }
+
+            
+            try {
+                await this.db.execAsync('ALTER TABLE transacciones ADD COLUMN usuario_id INTEGER')
+            } catch (e) {
+                // ignore if column exists
+            }
+
+            try {
+                await this.db.execAsync('ALTER TABLE pagos ADD COLUMN usuario_id INTEGER')
+            } catch (e) {
+                // ignore if column exists
+            }
+
+            try {
+                await this.db.execAsync('ALTER TABLE presupuestos ADD COLUMN usuario_id INTEGER')
+            } catch (e) {
+                // ignore if column exists
             }
             
         }
@@ -212,11 +253,13 @@ class DatabaseService {
     // ===========================================================================================================================
 
     async getAllTransaccion() {
+        const userId = this.getCurrentUserId(); 
         if (Platform.OS === 'web') {
             const data = localStorage.getItem(this.storageKey)
-            return data ? JSON.parse(data) : []
+            const todas = data ? JSON.parse(data) : [] 
+            return todas.filter(t => t.usuario_id === userId) 
         } else {
-            return await this.db.getAllAsync('SELECT * FROM transacciones ORDER BY id DESC')
+            return await this.db.getAllAsync('SELECT * FROM transacciones WHERE usuario_id = ? ORDER BY id DESC', userId) 
         }
     }
 
@@ -225,6 +268,7 @@ class DatabaseService {
 
 
   async addTransaccion(monto, categoria, fecha, descripcion, tipo) {
+    const userId = this.getCurrentUserId(); 
     Transaccion.validarMonto(monto);
     Transaccion.validarCategoria(categoria);
     Transaccion.validarDescripcion(descripcion || '');
@@ -232,22 +276,23 @@ class DatabaseService {
     Transaccion.validarFecha(fecha);
 
     if (Platform.OS === 'web') {
-      const transacciones = await this.getAllTransaccion();
-      const nueva = { id: Date.now(), monto, categoria, fecha, descripcion, tipo };
+      const transacciones = JSON.parse(localStorage.getItem(this.storageKey) || '[]'); 
+      const nueva = { id: Date.now(), usuario_id: userId, monto, categoria, fecha, descripcion, tipo }; 
       transacciones.unshift(nueva);
       localStorage.setItem(this.storageKey, JSON.stringify(transacciones));
       return nueva;
     } else {
       const result = await this.db.runAsync(
-        `INSERT INTO transacciones (monto, categoria, fecha, descripcion, tipo)
-         VALUES (?, ?, ?, ?, ?)`,
-        monto, categoria, fecha, descripcion, tipo
+        `INSERT INTO transacciones (usuario_id, monto, categoria, fecha, descripcion, tipo)
+         VALUES (?, ?, ?, ?, ?, ?)`, 
+        userId, monto, categoria, fecha, descripcion, tipo 
       );
-      return { id: result.lastInsertRowId, monto, categoria, fecha, descripcion, tipo };
+      return { id: result.lastInsertRowId, usuario_id: userId, monto, categoria, fecha, descripcion, tipo }; 
     }
   }
 
   async updateTransaccion(id, nuevosValores) {
+    const userId = this.getCurrentUserId(); 
     const { monto, categoria, fecha, descripcion, tipo } = nuevosValores;
     if (monto !== undefined) Transaccion.validarMonto(monto);
     if (categoria !== undefined) Transaccion.validarCategoria(categoria);
@@ -256,8 +301,8 @@ class DatabaseService {
     if (fecha !== undefined) Transaccion.validarFecha(fecha);
 
     if (Platform.OS === 'web') {
-      const transacciones = await this.getAllTransaccion();
-      const index = transacciones.findIndex(t => t.id === id);
+      const transacciones = JSON.parse(localStorage.getItem(this.storageKey) || '[]'); 
+      const index = transacciones.findIndex(t => t.id === id && t.usuario_id === userId); 
       if (index === -1) return null;
       transacciones[index] = { ...transacciones[index], ...nuevosValores };
       localStorage.setItem(this.storageKey, JSON.stringify(transacciones));
@@ -266,21 +311,22 @@ class DatabaseService {
       await this.db.runAsync(
         `UPDATE transacciones
          SET monto = ?, categoria = ?, fecha = ?, descripcion = ?, tipo = ?
-         WHERE id = ?`,
-        monto, categoria, fecha, descripcion, tipo, id
+         WHERE id = ? AND usuario_id = ?`, 
+        monto, categoria, fecha, descripcion, tipo, id, userId 
       );
       return { id, ...nuevosValores };
     }
   }
 
   async deleteTransaccion(id) {
+    const userId = this.getCurrentUserId(); 
     if (Platform.OS === 'web') {
-      const transacciones = await this.getAllTransaccion();
-      const nuevas = transacciones.filter(t => t.id !== id);
+      const transacciones = JSON.parse(localStorage.getItem(this.storageKey) || '[]'); 
+      const nuevas = transacciones.filter(t => !(t.id === id && t.usuario_id === userId)); 
       localStorage.setItem(this.storageKey, JSON.stringify(nuevas));
       return true;
     } else {
-      await this.db.runAsync('DELETE FROM transacciones WHERE id = ?', id);
+      await this.db.runAsync('DELETE FROM transacciones WHERE id = ? AND usuario_id = ?', id, userId); 
       return true;
     }
   }
@@ -289,36 +335,40 @@ class DatabaseService {
   // PAGOS
   // ===========================================================================================================================
   async getAllPagos() {
+    const userId = this.getCurrentUserId(); 
     if (Platform.OS === 'web') {
       const data = localStorage.getItem(this.storageKeyPagos);
-      return data ? JSON.parse(data) : [];
+      const todos = data ? JSON.parse(data) : []; 
+      return todos.filter(p => p.usuario_id === userId); 
     } else {
-      return await this.db.getAllAsync('SELECT * FROM pagos ORDER BY id DESC');
+      return await this.db.getAllAsync('SELECT * FROM pagos WHERE usuario_id = ? ORDER BY id DESC', userId); 
     }
   }
 
   async addPago(nombre, monto, fecha, metodo) {
+    const userId = this.getCurrentUserId(); 
     if (Platform.OS === 'web') {
       const existing = JSON.parse(localStorage.getItem(this.storageKeyPagos) || '[]');
-      const nuevo = { id: Date.now(), nombre, monto, fecha, metodo };
+      const nuevo = { id: Date.now(), usuario_id: userId, nombre, monto, fecha, metodo }; 
       existing.unshift(nuevo);
       localStorage.setItem(this.storageKeyPagos, JSON.stringify(existing));
       return nuevo;
     } else {
       const result = await this.db.runAsync(
-        `INSERT INTO pagos (nombre, monto, fecha, metodo)
-         VALUES (?, ?, ?, ?)`,
-        nombre, monto, fecha, metodo
+        `INSERT INTO pagos (usuario_id, nombre, monto, fecha, metodo)
+         VALUES (?, ?, ?, ?, ?)`, 
+        userId, nombre, monto, fecha, metodo 
       );
-      return { id: result.lastInsertRowId, nombre, monto, fecha, metodo };
+      return { id: result.lastInsertRowId, usuario_id: userId, nombre, monto, fecha, metodo }; 
     }
   }
 
   async updatePago(id, nuevosValores) {
+    const userId = this.getCurrentUserId(); 
     const { nombre, monto, fecha, metodo } = nuevosValores;
     if (Platform.OS === 'web') {
-      const pagos = await this.getAllPagos();
-      const index = pagos.findIndex(p => p.id === id);
+      const pagos = JSON.parse(localStorage.getItem(this.storageKeyPagos) || '[]'); 
+      const index = pagos.findIndex(p => p.id === id && p.usuario_id === userId); 
       if (index === -1) return null;
       pagos[index] = { ...pagos[index], ...nuevosValores };
       localStorage.setItem(this.storageKeyPagos, JSON.stringify(pagos));
@@ -327,21 +377,22 @@ class DatabaseService {
       await this.db.runAsync(
         `UPDATE pagos
          SET nombre = ?, monto = ?, fecha = ?, metodo = ?
-         WHERE id = ?`,
-        nombre, monto, fecha, metodo, id
+         WHERE id = ? AND usuario_id = ?`, 
+        nombre, monto, fecha, metodo, id, userId 
       );
       return { id, ...nuevosValores };
     }
   }
 
   async deletePago(id) {
+    const userId = this.getCurrentUserId(); 
     if (Platform.OS === 'web') {
-      const pagos = await this.getAllPagos();
-      const nuevas = pagos.filter(p => p.id !== id);
+      const pagos = JSON.parse(localStorage.getItem(this.storageKeyPagos) || '[]'); 
+      const nuevas = pagos.filter(p => !(p.id === id && p.usuario_id === userId)); 
       localStorage.setItem(this.storageKeyPagos, JSON.stringify(nuevas));
       return true;
     } else {
-      await this.db.runAsync('DELETE FROM pagos WHERE id = ?', id);
+      await this.db.runAsync('DELETE FROM pagos WHERE id = ? AND usuario_id = ?', id, userId); 
       return true;
     }
   }
@@ -350,20 +401,24 @@ class DatabaseService {
   // PRESUPUESTOS
   // ===========================================================================================================================
   async getAllPresupuestos() {
+    const userId = this.getCurrentUserId(); 
     if (Platform.OS === 'web') {
       const data = localStorage.getItem(this.storageKeyPresupuestos);
-      return data ? JSON.parse(data) : [];
+      const todos = data ? JSON.parse(data) : []; 
+      return todos.filter(p => p.usuario_id === userId); 
     } else {
-      return await this.db.getAllAsync('SELECT * FROM presupuestos ORDER BY id DESC');
+      return await this.db.getAllAsync('SELECT * FROM presupuestos WHERE usuario_id = ? ORDER BY id DESC', userId); 
     }
   }
 
     async addPresupuesto(nombre, monto, categoria, anio) {
+      const userId = this.getCurrentUserId(); 
       if (Platform.OS === 'web') {
         const existing = JSON.parse(localStorage.getItem(this.storageKeyPresupuestos) || '[]');
 
         const nueva = {
           id: Date.now(),
+          usuario_id: userId, 
           nombre,
           monto,
           categoria,
@@ -375,13 +430,14 @@ class DatabaseService {
         return nueva;
       } else {
         const result = await this.db.runAsync(
-          `INSERT INTO presupuestos (nombre, monto, categoria, anio)
-            VALUES (?, ?, ?, ?)`,
-          nombre, monto, categoria, anio
+          `INSERT INTO presupuestos (usuario_id, nombre, monto, categoria, anio)
+            VALUES (?, ?, ?, ?, ?)`, 
+          userId, nombre, monto, categoria, anio 
         );
 
         return {
           id: result.lastInsertRowId,
+          usuario_id: userId, 
           nombre,
           monto,
           categoria,
@@ -390,9 +446,10 @@ class DatabaseService {
       }
     }
         async updatePresupuesto(id, nombre, monto, categoria, anio) {
+        const userId = this.getCurrentUserId(); 
         if (Platform.OS === 'web') {
             const existing = JSON.parse(localStorage.getItem(this.storageKeyPresupuestos) || '[]');
-            const index = existing.findIndex(p => p.id === id);
+            const index = existing.findIndex(p => p.id === id && p.usuario_id === userId); 
 
             if (index === -1) throw new Error('Presupuesto no encontrado para actualizar.');
 
@@ -410,8 +467,8 @@ class DatabaseService {
 
         } else {
             await this.db.runAsync(
-                `UPDATE presupuestos SET nombre = ?, monto = ?, categoria = ?, anio = ? WHERE id = ?`,
-                nombre, monto, categoria, anio, id
+                `UPDATE presupuestos SET nombre = ?, monto = ?, categoria = ?, anio = ? WHERE id = ? AND usuario_id = ?`, 
+                nombre, monto, categoria, anio, id, userId 
             );
             
             return { id, nombre, monto, categoria, anio };
@@ -419,13 +476,14 @@ class DatabaseService {
     }
 
     async deletePresupuesto(id) {
+        const userId = this.getCurrentUserId(); 
         if (Platform.OS === 'web') {
             const existing = JSON.parse(localStorage.getItem(this.storageKeyPresupuestos) || '[]');
-            const nuevas = existing.filter(p => p.id !== id);
+            const nuevas = existing.filter(p => !(p.id === id && p.usuario_id === userId)); 
             localStorage.setItem(this.storageKeyPresupuestos, JSON.stringify(nuevas));
             return true;
         } else {
-            await this.db.runAsync('DELETE FROM presupuestos WHERE id = ?', id);
+            await this.db.runAsync('DELETE FROM presupuestos WHERE id = ? AND usuario_id = ?', id, userId); 
             return true;
         }
     }

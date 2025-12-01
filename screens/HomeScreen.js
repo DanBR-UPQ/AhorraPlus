@@ -2,10 +2,11 @@ import { Text, StyleSheet, View,Image,TextInput, ScrollView, TouchableOpacity } 
 import React, { Component, useState, useEffect } from 'react'
 import { TransaccionController } from '../controllers/TransaccionController'
 import { PresupuestoController } from '../controllers/PresupuestoController'
+import DatabaseService from '../database/DatabaseService'
 
 
 
-export default function HomeScreen () {
+export default function HomeScreen ( {navigation}) {
 const[saldo,setSaldo]=useState("500")
 const [alertas, setAlertas] = useState([])
 
@@ -19,6 +20,11 @@ const categorias = [
   "Inversiones",
   "Regalos"
 ]
+
+const cerrarSesion = () => {
+  DatabaseService.logout();
+  navigation.navigate('LoginScreen');
+};
 
 useEffect(() => {
   verificarPresupuestos()
@@ -90,14 +96,14 @@ const verificarPresupuestos = async () => {
 
           <TouchableOpacity 
             style={styles.botonVertical} 
-            onPress={() => handlePress('TransaccionesScreen')} 
+            onPress={() => navigation.navigate('TransaccionesScreen')} 
           >
             <Text style={styles.concepto}>Transacciones</Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
             style={styles.botonVertical} 
-            onPress={() => handlePress('PresupuestoScreen')}
+            onPress={() => navigation.navigate('PresupuestoScreen')}
           >
             <Text style={styles.concepto}>Presupuestos</Text>
           </TouchableOpacity>
@@ -105,14 +111,14 @@ const verificarPresupuestos = async () => {
 
             <TouchableOpacity 
                 style={styles.botonVertical} 
-                onPress={() => handlePress('PagosScreen')}
+                onPress={() => navigation.navigate('PagosScreen')}
             >
                 <Text style={styles.concepto}>Pagos</Text>
             </TouchableOpacity>
           
           <TouchableOpacity 
             style={styles.botonVertical} 
-            onPress={() => handlePress('GraficosScreen')} 
+            onPress={() => navigation.navigate('GraficosScreen')} 
           >
             <Text style={styles.concepto}>Gráficas</Text>
           </TouchableOpacity>
@@ -145,6 +151,11 @@ const verificarPresupuestos = async () => {
          ))
        )}
      </View>
+
+    <TouchableOpacity style={styles.botonLogout} onPress={cerrarSesion}>
+      <Text style={styles.textoLogout}>Cerrar sesión</Text>
+    </TouchableOpacity>
+
      </ScrollView>
     </ScrollView>
     )
@@ -326,8 +337,8 @@ botonPagos: {
 },
 
 concepto:{
-    color: 'white',   
-    fontSize: 22,     
+    color: 'white', 
+    fontSize: 22, 
     textAlign: 'left',
     
 },
@@ -340,6 +351,22 @@ lapiz: {
     width: 18, 
     height: 18,
     resizeMode: 'contain',
-}
+},
+botonLogout: {
+  backgroundColor: '#3aa0b3',
+  paddingVertical: 12,
+  borderRadius: 10,
+  marginTop: 30,
+  alignItems: 'center',
+  width: '80%',
+  alignSelf: 'center',
+},
+
+textoLogout: {
+  color: 'white',
+  fontSize: 18,
+  fontWeight: 'bold',
+},
+
    
 })

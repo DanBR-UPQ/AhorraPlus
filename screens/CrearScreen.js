@@ -2,7 +2,7 @@ import { Text, StyleSheet, View,TextInput, Button, Alert } from 'react-native'
 import React, { useState } from 'react'
 import UsuarioController from '../controllers/UsuarioController'
 import { useNavigation } from '@react-navigation/native'
-
+import DatabaseService from '../database/DatabaseService'
 
 export default function CrearScreen () {
 const[nombre, setNombre]= useState('ingresa tu nombre');
@@ -21,8 +21,20 @@ const handleCrear = async () => {
         // store recovery answer as uppercase
         const recoveryAnswer = String(mascota).toUpperCase()
         await UsuarioController.initialize()
-        await UsuarioController.register(nombre || '', correo.trim(), telelefoni || null, clave, recoveryAnswer)
+        /* await UsuarioController.register(nombre || '', correo.trim(), telelefoni || null, clave, recoveryAnswer) */
+        
+
+        const nuevoUsuario = await UsuarioController.register(
+        nombre || '',
+        correo.trim(),
+        telelefoni || null,
+        clave,
+        recoveryAnswer
+        )
+
         Alert.alert('Éxito', 'Cuenta creada correctamente')
+
+        DatabaseService.setCurrentUser(nuevoUsuario.id);
         navigation.navigate('LoginScreen')
     } catch (err) {
         Alert.alert('Error', err.message || 'No se pudo crear cuenta')

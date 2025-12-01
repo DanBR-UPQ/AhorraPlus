@@ -17,8 +17,12 @@ const handleLogin = async () => {
 
         await UsuarioController.login(correo.trim(), clave)
         Alert.alert('Éxito', 'Inicio de sesión correcto.')
+
+        const usuario = await DatabaseService.getUsuarioByCorreo(correo);
+        DatabaseService.setCurrentUser(usuario.id);
         navigation.navigate('HomeScreen')
-        // en BarraLateral el cambio de pantalla ya ocurre por la UI; podríamos notificar o cambiar estado si es necesario
+        
+        
     } catch (err) {
         Alert.alert('Error', err.message || 'Error en login')
     }
