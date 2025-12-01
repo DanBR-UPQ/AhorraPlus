@@ -96,9 +96,9 @@ const styles = StyleSheet.create({
 
     },
     header:{
-        backgroundColor:"#ffffffff",
+        backgroundColor:"#052659",
         width:'100%',
-        height:80,
+        height:2,
         alignSelf:'flex-start',
         
 
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     azul:{
         backgroundColor:"#052659",
         width:'100%',
-        height:80,
+        height:40,
         marginTop:'25%',
         alignItems:'center',
         justifyContent:'center'
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     },
     titulo:{
         color:'white',
-        fontSize:'25',
+        fontSize:25,
         alignItems:'center',
         justifyContent:'center'
         
